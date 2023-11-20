@@ -30,6 +30,7 @@ dependencies {
   annotationProcessor "org.projectlombok:${lombokVersion}"
   implementation 'com.fasterxml.jackson.core:jackson-core:2.16.0'
   implementation 'org.xerial:sqlite-jdbc:3.44.0.0'
+  implementation "org.hibernate.orm:hibernate-community-dialects:${hibernateVersion}"
 
 
 
