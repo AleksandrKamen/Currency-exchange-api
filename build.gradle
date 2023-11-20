@@ -12,6 +12,8 @@ repositories {
 
 ext {
   junitVersion = '5.9.2'
+  lombokVersion = 'lombok:1.18.30'
+  hibernateVersion = '6.3.1.Final'
 }
 
 
@@ -22,6 +24,14 @@ tasks.withType(JavaCompile) {
 
 dependencies {
   compileOnly('jakarta.servlet:jakarta.servlet-api:6.0.0')
+  implementation "org.hibernate:hibernate-core:${hibernateVersion}"
+  implementation 'org.slf4j:slf4j-log4j12:2.0.9'
+  compileOnly "org.projectlombok:${lombokVersion}"
+  annotationProcessor "org.projectlombok:${lombokVersion}"
+  implementation 'com.fasterxml.jackson.core:jackson-core:2.16.0'
+  implementation 'org.xerial:sqlite-jdbc:3.44.0.0'
+
+
 
   testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
