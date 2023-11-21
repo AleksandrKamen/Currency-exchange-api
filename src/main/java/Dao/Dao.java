@@ -7,7 +7,7 @@ public interface Dao<K, E> {
     E save(E entity);
     List<E>findAll();
     Optional<E> findById(K id);
-    E update(E entity);
+    E update(E entity, K id);
     boolean delete(K id);
 
 
