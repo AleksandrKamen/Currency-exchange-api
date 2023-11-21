@@ -1,14 +1,19 @@
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import util.HibernateUtil;
+import Dao.CurrencyDao;
+import entity.CurrencyEntity;
+import util.JDBCUtil;
 
 public class Main {
     public static void main(String[] args) {
-        try (SessionFactory sessionFactory = HibernateUtil.createSessionFactory();
-            Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            session.getTransaction().commit();
 
-        }
+        CurrencyDao currencyDao = new CurrencyDao();
+        CurrencyEntity currency = CurrencyEntity.builder()
+                .code("888")
+                .sign("8887")
+                .fullName("dsadas")
+                .build();
+        currencyDao.save(currency);
+
+
+
     }
 }
