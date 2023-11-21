@@ -22,7 +22,7 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
                                              insert into currencies (code, fullName, sign) 
                                              VALUES (?,?,?) 
                                              """;
-    private final String FIND_ALL_CURRENCY_SQL = """
+    private final String FIND_ALL_CURRENCIES_SQL = """
                                                 select id,code,fullName,sign from currencies
                                                  """;
     private final String FIND_BY_ID_CURRENCY_SQL = """
@@ -36,6 +36,10 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
     private final String DELETE__CURRENCY_BY_ID_SQL = """
                                                 delete from currencies
                                                 where id = ?
+                                                 """;
+    private final String DELETE__CURRENCY_BY_CODE_SQL = """
+                                                delete from currencies
+                                                where code = ?
                                                  """;
     private final String UPDATE_CURRENCY_BY_ID_SQL = """
                                                 update currencies set code = ?, fullName = ?, sign = ? 
@@ -60,7 +64,7 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
     public List<CurrencyEntity> findAll() {
         ArrayList<CurrencyEntity> currencyEntities = new ArrayList<>();
         try (Connection connection = JDBCUtil.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_CURRENCY_SQL)) {
+            PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_CURRENCIES_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
                 currencyEntities.add(currencyBuild(resultSet));
@@ -118,6 +122,15 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
         try (Connection connection = JDBCUtil.getConnection();
            PreparedStatement preparedStatement = connection.prepareStatement(DELETE__CURRENCY_BY_ID_SQL)) {
            preparedStatement.setInt(1,id);
+           return preparedStatement.executeUpdate() > 0;
+        }
+
+    }
+    @SneakyThrows
+    public boolean deleteByCode(String code) {
+        try (Connection connection = JDBCUtil.getConnection();
+           PreparedStatement preparedStatement = connection.prepareStatement(DELETE__CURRENCY_BY_CODE_SQL)) {
+           preparedStatement.setString(1,code);
            return preparedStatement.executeUpdate() > 0;
         }
 
