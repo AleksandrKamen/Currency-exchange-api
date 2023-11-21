@@ -1,4 +1,4 @@
-package Dao;
+package dao;
 
 import entity.CurrencyEntity;
 import lombok.AccessLevel;

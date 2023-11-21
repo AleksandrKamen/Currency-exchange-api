@@ -1,6 +1,5 @@
-package Dao;
+package dao;
 
-import entity.CurrencyEntity;
 import entity.ExchangeRateEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
