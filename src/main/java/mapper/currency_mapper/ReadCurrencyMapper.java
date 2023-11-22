@@ -1,9 +1,10 @@
-package mapper;
+package mapper.currency_mapper;
 
 import dto.CurrencyDto;
 import entity.CurrencyEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import mapper.Mapper;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReadCurrencyMapper implements Mapper<CurrencyEntity, CurrencyDto> {
