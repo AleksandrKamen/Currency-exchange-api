@@ -17,7 +17,7 @@
 <%@ include file="header.jsp"  %>
 <h1>Информация о выбранной валюте</h1>
 
- ${requestScope.currency}
+ ID:${requestScope.currency.id} name: ${requestScope.currency.name} code:${requestScope.currency.code} sign: ${requestScope.currency.sign}
 
 <c:if test="${not empty requestScope.errors}">
     <div style="color: red">

@@ -21,7 +21,7 @@
 <ul>
     <c:forEach var="currencies" items="${requestScope.currencies}">
         <li>
-        ${currencies}
+         <a href="currency?code=${currencies.code}">${currencies.name}</a>
         <br>
         <br>
         </li>
@@ -29,7 +29,7 @@
     </c:forEach>
 </ul>
 
-
+<div style="position: absolute; top: 0; right: 0">
 <h2>Добавить валюту</h2>
 <form action="/currencies" method="post" enctype="application/x-www-form-urlencoded">
     <label for="name"> Currency name:
@@ -55,13 +55,13 @@
 
     <c:if test="${not empty requestScope.newCurrency}">
         <div style="color: green">
-           Валюта ${requestScope.newCurrency} добавлена
+           Валюта: ${requestScope.newCurrency.name} успешно добавлена
         </div>
     </c:if>
 
 
  </form>
-
+</div>
 </body>
 
 </html>

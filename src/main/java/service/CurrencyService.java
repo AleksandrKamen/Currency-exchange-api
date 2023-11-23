@@ -32,27 +32,23 @@ public class CurrencyService {
      public Object[] readAllCurrencies(){
        var allCurrencies = currencyDao.findAll();
        return allCurrencies.stream()
-               .map(readCurrencyMapper::mapFrom)
-                 .map(currencyDto -> mapDto(currencyDto))
-               .toArray();
+               .map(readCurrencyMapper::mapFrom).toArray();
      }
 
-     public String readCurrencyByCode(String code){
+     public CurrencyDto readCurrencyByCode(String code){
          ValidationResult validationResult = readCurrencyValidator.isValid(code);
          if (!validationResult.isValid()){
              throw new ValidationException(validationResult.getErrors());
          }
          return currencyDao.findByCode(code)
-                 .map(readCurrencyMapper::mapFrom)
-                    .map(currencyDto -> mapDto(currencyDto))
-                       .get();
+                 .map(readCurrencyMapper::mapFrom).get();
 
      }
 
 
 
     @SneakyThrows
-    public String  create(CurrencyDto currencyDto){
+    public CurrencyDto create(CurrencyDto currencyDto){
         ObjectMapper objectMapper = new ObjectMapper();
         ValidationResult validationResult = createCurrencyValidator.isValid(currencyDto);
         if (!validationResult.isValid()){
@@ -60,7 +56,7 @@ public class CurrencyService {
         }
         CurrencyEntity currency = createCurrencyMapper.mapFrom(currencyDto);
         currencyDao.save(currency);
-     return objectMapper.writeValueAsString(currency);
+     return currencyDto;
 
     }
 
