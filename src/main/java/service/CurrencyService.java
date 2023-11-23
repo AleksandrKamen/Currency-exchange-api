@@ -33,8 +33,16 @@ public class CurrencyService {
                .map(readCurrencyMapper::mapFrom)
                  .map(currencyDto -> mapDto(currencyDto))
                .toArray();
+     }
+
+     public String readCurrencyByCode(String code){
+         return currencyDao.findByCode(code)
+                 .map(readCurrencyMapper::mapFrom)
+                    .map(currencyDto -> mapDto(currencyDto))
+                       .get();
 
      }
+
 
 
     @SneakyThrows

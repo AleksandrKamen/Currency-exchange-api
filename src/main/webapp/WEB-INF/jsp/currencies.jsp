@@ -15,6 +15,7 @@
     <title>Title</title>
 </head>
 <body>
+<%@ include file="header.jsp"  %>
 
 <h1>Доступные Валюты</h1>
 <ul>
