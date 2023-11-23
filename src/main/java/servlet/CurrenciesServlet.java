@@ -22,8 +22,6 @@ public class CurrenciesServlet extends HttpServlet {
             req.getRequestDispatcher(JSPHelper.getPath("currencies")).forward(req, resp);
     }
 
-
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
@@ -34,7 +32,8 @@ public class CurrenciesServlet extends HttpServlet {
                 .build();
 
         try  {
-            var string = currencyService.create(currencyDto);
+            var currency = currencyService.create(currencyDto);
+            req.setAttribute("newCurrency", currency);
             doGet(req, resp);
 
         } catch (ValidationException validationException){

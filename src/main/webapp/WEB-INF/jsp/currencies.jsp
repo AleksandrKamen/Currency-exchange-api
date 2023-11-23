@@ -53,6 +53,13 @@
 
     </c:if>
 
+    <c:if test="${not empty requestScope.newCurrency}">
+        <div style="color: green">
+           Валюта ${requestScope.newCurrency} добавлена
+        </div>
+    </c:if>
+
+
  </form>
 
 </body>

@@ -55,22 +55,14 @@ public class CurrencyService {
     public String  create(CurrencyDto currencyDto){
         ObjectMapper objectMapper = new ObjectMapper();
         ValidationResult validationResult = createCurrencyValidator.isValid(currencyDto);
-        // validation - проверяем правильность набора
         if (!validationResult.isValid()){
             throw new ValidationException(validationResult.getErrors());
         }
-       // map конвертируем данные в сущность
         CurrencyEntity currency = createCurrencyMapper.mapFrom(currencyDto);
-      // Сохраням сущность в БД
         currencyDao.save(currency);
-     // Возвращаем String
      return objectMapper.writeValueAsString(currency);
 
     }
-
-
-
-
 
 
 @SneakyThrows

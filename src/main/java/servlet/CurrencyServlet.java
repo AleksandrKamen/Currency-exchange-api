@@ -8,10 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.CurrencyService;
 import util.JSPHelper;
-import validator.Error;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 @WebServlet("/currency")
 public class CurrencyServlet extends HttpServlet {
@@ -24,7 +22,6 @@ public class CurrencyServlet extends HttpServlet {
             req.getRequestDispatcher(JSPHelper.getPath("currency")).forward(req, resp);
         } catch (ValidationException validationException){
             req.setAttribute("errors", validationException.getErrors());
-            System.out.println(req.getAttribute("errors"));
             req.getRequestDispatcher(JSPHelper.getPath("currency")).forward(req, resp);
         }
     }
