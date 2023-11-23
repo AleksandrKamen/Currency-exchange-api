@@ -33,6 +33,14 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
                                                 select id,code,fullName,sign from currencies
                                                 where code = ?
                                                  """;
+    private final String FIND_BY_NAME_CURRENCY_SQL = """
+                                                select id,code,fullName,sign from currencies
+                                                where fullName = ?
+                                                 """;
+    private final String FIND_BY_SIGN_CURRENCY_SQL = """
+                                                select id,code,fullName,sign from currencies
+                                                where sign = ?
+                                                 """;
     private final String DELETE__CURRENCY_BY_ID_SQL = """
                                                 delete from currencies
                                                 where id = ?
@@ -99,6 +107,33 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
            if (resultSet.next()){
                currency = currencyBuild(resultSet);
            }
+            return Optional.ofNullable(currency);
+
+        }
+    }
+    @SneakyThrows
+    public Optional<CurrencyEntity> findByName(String name) {
+        CurrencyEntity currency = null;
+        try (Connection connection = JDBCUtil.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_NAME_CURRENCY_SQL)) {
+            preparedStatement.setString(1,name);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                currency = currencyBuild(resultSet);
+            }
+            return Optional.ofNullable(currency);
+
+        }
+    }    @SneakyThrows
+    public Optional<CurrencyEntity> findBySign(String sign) {
+        CurrencyEntity currency = null;
+        try (Connection connection = JDBCUtil.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_SIGN_CURRENCY_SQL)) {
+            preparedStatement.setString(1,sign);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                currency = currencyBuild(resultSet);
+            }
             return Optional.ofNullable(currency);
 
         }

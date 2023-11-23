@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.CurrencyService;
+import util.JSPHelper;
 
 import java.io.IOException;
 
@@ -18,7 +19,7 @@ public class CurrenciesServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
             req.setAttribute("currencies", currencyService.readAllCurrencies());
-            req.getRequestDispatcher("/WEB-INF/jsp/currencies.jsp").forward(req, resp);
+            req.getRequestDispatcher(JSPHelper.getPath("currencies")).forward(req, resp);
     }
 
 
@@ -39,11 +40,7 @@ public class CurrenciesServlet extends HttpServlet {
         } catch (ValidationException validationException){
             req.setAttribute("errors", validationException.getErrors());
             doGet(req, resp);
-
-
-
         }
-
 
     }
 }

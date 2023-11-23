@@ -11,6 +11,7 @@ import lombok.SneakyThrows;
 import mapper.currency_mapper.CreateCurrencyMapper;
 import mapper.currency_mapper.ReadCurrencyMapper;
 import validator.CreateCurrencyValidator;
+import validator.ReadCurrencyValidator;
 import validator.ValidationResult;
 
 
@@ -24,6 +25,7 @@ public class CurrencyService {
     private final ReadCurrencyMapper readCurrencyMapper = ReadCurrencyMapper.getInstance();
 
     private final CreateCurrencyValidator createCurrencyValidator = CreateCurrencyValidator.getInstance();
+    private final ReadCurrencyValidator readCurrencyValidator = ReadCurrencyValidator.getInstance();
 
 
 
@@ -36,6 +38,10 @@ public class CurrencyService {
      }
 
      public String readCurrencyByCode(String code){
+         ValidationResult validationResult = readCurrencyValidator.isValid(code);
+         if (!validationResult.isValid()){
+             throw new ValidationException(validationResult.getErrors());
+         }
          return currencyDao.findByCode(code)
                  .map(readCurrencyMapper::mapFrom)
                     .map(currencyDto -> mapDto(currencyDto))

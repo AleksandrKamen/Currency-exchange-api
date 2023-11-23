@@ -9,16 +9,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CreateCurrencyValidator implements Validator<CurrencyDto>{
     private static final CreateCurrencyValidator INSTANCE = new CreateCurrencyValidator();
+    private  final CurrencyDao currencyDao = CurrencyDao.getInstance();
 
 
 
     @Override
     public ValidationResult isValid(CurrencyDto object) {
       ValidationResult validationResult = new ValidationResult();
-      if (CurrencyDao.getInstance().findByCode(object.getCode()).isPresent()){
-          validationResult.add(Error.of("Данная валюта уже имеется в базе данных"));
+      if (currencyDao.findByCode(object.getCode()).isPresent() || currencyDao.findByName(object.getName()).isPresent() || currencyDao.findBySign(object.getSign()).isPresent()){
+          validationResult.add(Error.of(409,"Указаны некорректные или повторяющиеся данные - повторите попытку снова"));
       }
-
       return validationResult;
     }
 

@@ -33,7 +33,7 @@
 <h2>Добавить валюту</h2>
 <form action="/currencies" method="post" enctype="application/x-www-form-urlencoded">
     <label for="name"> Currency name:
-        <input type="text" name="name" id="name">
+        <input type="text" name="name" id="name" required>
     </label> <br>
     <label for="code"> Code:
         <input type="text" name="code" id="code" required>
