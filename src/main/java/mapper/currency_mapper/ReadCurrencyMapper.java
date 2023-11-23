@@ -15,7 +15,7 @@ public static ReadCurrencyMapper getInstance(){return INSTANCE;}
     public CurrencyDto mapFrom(CurrencyEntity object) {
         return CurrencyDto.builder()
                 .id(object.getId())
-                .fullName(object.getFullName())
+                .name(object.getFullName())
                 .code(object.getCode())
                 .sign(object.getSign())
                 .build();

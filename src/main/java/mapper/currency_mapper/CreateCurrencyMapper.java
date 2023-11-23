@@ -16,7 +16,7 @@ public class CreateCurrencyMapper implements Mapper<CurrencyDto, CurrencyEntity>
     public CurrencyEntity mapFrom(CurrencyDto object) {
         return CurrencyEntity.builder()
                 .code(object.getCode())
-                .fullName(object.getFullName())
+                .fullName(object.getName())
                 .sign(object.getSign())
                 .build();
     }

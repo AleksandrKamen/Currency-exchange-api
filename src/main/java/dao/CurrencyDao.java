@@ -79,7 +79,7 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
     public Optional<CurrencyEntity> findById(Integer id) {
         CurrencyEntity currency = null;
         try (Connection connection = JDBCUtil.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_CURRENCY_SQL)) {
+            PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_CURRENCY_SQL)) {
             preparedStatement.setInt(1,id);
             ResultSet resultSet = preparedStatement.executeQuery();
            if (resultSet.next()){
