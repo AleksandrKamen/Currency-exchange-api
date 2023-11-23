@@ -13,8 +13,6 @@ import mapper.currency_mapper.ReadCurrencyMapper;
 import validator.CreateCurrencyValidator;
 import validator.ValidationResult;
 
-import java.util.stream.Collectors;
-
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CurrencyService {
@@ -25,32 +23,26 @@ public class CurrencyService {
 
     private final ReadCurrencyMapper readCurrencyMapper = ReadCurrencyMapper.getInstance();
 
-     private final CreateCurrencyValidator createCurrencyValidator = CreateCurrencyValidator.getInstance();
+    private final CreateCurrencyValidator createCurrencyValidator = CreateCurrencyValidator.getInstance();
 
 
 
-     public String readAllCurrencies(){
+     public Object[] readAllCurrencies(){
        var allCurrencies = currencyDao.findAll();
        return allCurrencies.stream()
                .map(readCurrencyMapper::mapFrom)
                  .map(currencyDto -> mapDto(currencyDto))
-                    .collect(Collectors.joining("\n"));
+               .toArray();
 
      }
 
-     public String read(){
-         var currencyEntity = currencyDao.findById(3);
-
-         return "";
-
-     }
 
     @SneakyThrows
     public String  create(CurrencyDto currencyDto){
         ObjectMapper objectMapper = new ObjectMapper();
         ValidationResult validationResult = createCurrencyValidator.isValid(currencyDto);
         // validation - проверяем правильность набора
-        if (validationResult.isValid()){
+        if (!validationResult.isValid()){
             throw new ValidationException(validationResult.getErrors());
         }
        // map конвертируем данные в сущность

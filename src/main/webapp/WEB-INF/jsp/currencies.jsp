@@ -15,12 +15,13 @@
     <title>Title</title>
 </head>
 <body>
+
 <h1>Доступные Валюты</h1>
 <ul>
     <c:forEach var="currencies" items="${requestScope.currencies}">
         <li>
-        <br>
         ${currencies}
+        <br>
         <br>
         </li>
 
@@ -28,7 +29,31 @@
 </ul>
 
 
+<h2>Добавить валюту</h2>
+<form action="/currencies" method="post" enctype="application/x-www-form-urlencoded">
+    <label for="name"> Currency name:
+        <input type="text" name="name" id="name">
+    </label> <br>
+    <label for="code"> Code:
+        <input type="text" name="code" id="code" required>
+    </label> <br>
+    <label for="sign"> Sign:
+        <input type="text" name="sign" id="sign" required>
+    </label> <br>
+    <button type="submit">Send</button>
 
+    <c:if test="${not empty requestScope.errors}">
+        <div style="color: red">
+            <c:forEach var="error" items="${requestScope.errors}">
+                <samp>${error.message}</samp>
+            </c:forEach>
+
+        </div>
+
+    </c:if>
+
+ </form>
 
 </body>
+
 </html>

@@ -15,7 +15,6 @@ public class CreateCurrencyValidator implements Validator<CurrencyDto>{
     @Override
     public ValidationResult isValid(CurrencyDto object) {
       ValidationResult validationResult = new ValidationResult();
-
       if (CurrencyDao.getInstance().findByCode(object.getCode()).isPresent()){
           validationResult.add(Error.of("Данная валюта уже имеется в базе данных"));
       }
