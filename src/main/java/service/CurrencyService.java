@@ -49,7 +49,6 @@ public class CurrencyService {
 
     @SneakyThrows
     public CurrencyDto create(CurrencyDto currencyDto){
-        ObjectMapper objectMapper = new ObjectMapper();
         ValidationResult validationResult = createCurrencyValidator.isValid(currencyDto);
         if (!validationResult.isValid()){
             throw new ValidationException(validationResult.getErrors());
@@ -65,8 +64,10 @@ public class CurrencyService {
 public String mapDto(CurrencyDto currencyDto){
     ObjectMapper objectMapper = new ObjectMapper();
     return objectMapper.writeValueAsString(currencyDto);
-
 }
+
+
+
     public static CurrencyService getInstance(){return INSTANCE;}
 
 }

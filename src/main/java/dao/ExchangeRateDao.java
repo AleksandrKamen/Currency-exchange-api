@@ -1,5 +1,6 @@
 package dao;
 
+import entity.CurrencyEntity;
 import entity.ExchangeRateEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -23,15 +24,30 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
                                              VALUES (?,?,?) 
                                              """;
     private final String FIND_ALL_EXCHANGERATES_SQL = """
-                                                select id,baseCurrencyId, targetCurrencyId, rate from exchangerates
+                                                select exchangerates.id as id, 
+                                                c.id as base_id, c.code as base_code, c.fullName as base_name, c.sign as base_sign, 
+                                                c2.id as target_id,c2.code as target_code, c2.fullName as target_name, c2.sign as target_sign, rate 
+                                                from exchangerates
+                                                JOIN currencies c on c.id = exchangerates.baseCurrencyId
+                                                join currencies c2 on c2.id = exchangerates.targetCurrencyId
                                                  """;
     private final String FIND_BY_ID_EXCHANGERATE_SQL = """
-                                                select id,baseCurrencyId, targetCurrencyId, rate from exchangerates
-                                                where id = ?
+                                                select exchangerates.id as id, 
+                                                c.id as base_id, c.code as base_code, c.fullName as base_name, c.sign as base_sign, 
+                                                c2.id as target_id,c2.code as target_code, c2.fullName as target_name, c2.sign as target_sign, rate 
+                                                from exchangerates
+                                                JOIN currencies c on c.id = exchangerates.baseCurrencyId
+                                                join currencies c2 on c2.id = exchangerates.targetCurrencyId
+                                                where exchangerates.id = ?
                                                  """;
     private final String FIND_EXCHANGERATE_BY_CODE_CURRENCYS_SQL = """
-                                                select id,baseCurrencyId, targetCurrencyId, rate from exchangerates
-                                                where baseCurrencyId = (select currencies.id from currencies where code = ?) and  targetCurrencyId = (select currencies.id from currencies where code = ?)
+                                                select exchangerates.id as id, 
+                                                c.id as base_id, c.code as base_code, c.fullName as base_name, c.sign as base_sign, 
+                                                c2.id as target_id,c2.code as target_code, c2.fullName as target_name, c2.sign as target_sign, rate 
+                                                from exchangerates
+                                                JOIN currencies c on c.id = exchangerates.baseCurrencyId
+                                                join currencies c2 on c2.id = exchangerates.targetCurrencyId
+                                                where base_code = ? and target_code = ?
                                                  """;
     private final String DELETE_EXCHANGERATE_BY_ID_SQL = """
                                                 delete from exchangerates
@@ -54,8 +70,8 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
     public ExchangeRateEntity save(ExchangeRateEntity entity) {
         try (Connection connection = JDBCUtil.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_EXCHANGERATE_SQL)) {
-            preparedStatement.setInt(1,entity.getBaseCurrencyId());
-            preparedStatement.setInt(2,entity.getTargetCurrencyId());
+            preparedStatement.setInt(1,entity.getBaseCurrencyId().getId());
+            preparedStatement.setInt(2,entity.getTargetCurrencyId().getId());
             preparedStatement.setBigDecimal(3,entity.getRate());
             preparedStatement.executeUpdate();
             return entity;
@@ -152,10 +168,24 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
 
 
     private ExchangeRateEntity exchangeRateBuild(ResultSet resultSet) throws SQLException {
+
+        var baseCurrency = CurrencyEntity.builder()
+                .id(resultSet.getInt("base_id"))
+                .code(resultSet.getString("base_code"))
+                .fullName(resultSet.getString("base_name"))
+                .sign(resultSet.getString("base_sign"))
+                .build();
+        var targetCurrency = CurrencyEntity.builder()
+                .id(resultSet.getInt("target_id"))
+                .code(resultSet.getString("target_code"))
+                .fullName(resultSet.getString("target_name"))
+                .sign(resultSet.getString("target_sign"))
+                .build();
+
         return ExchangeRateEntity.builder()
                 .id(resultSet.getInt("id"))
-                .baseCurrencyId(resultSet.getInt("baseCurrencyId"))
-                .targetCurrencyId(resultSet.getInt("targetCurrencyId"))
+                .baseCurrencyId(baseCurrency)
+                .targetCurrencyId(targetCurrency)
                 .rate(resultSet.getBigDecimal("rate"))
                 .build();
     }

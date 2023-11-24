@@ -1,4 +1,4 @@
-package servlet;
+package servlet.currency;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

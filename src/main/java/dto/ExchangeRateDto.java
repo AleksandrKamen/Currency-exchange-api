@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Builder
 public class ExchangeRateDto {
     private Integer id;
-    private Integer baseCurrencyId;
-    private Integer targetCurrencyId;
+    private String baseCurrency;
+    private String targetCurrency;
     private BigDecimal rate;
 }

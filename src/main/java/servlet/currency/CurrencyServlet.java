@@ -1,4 +1,4 @@
-package servlet;
+package servlet.currency;
 
 import exception.ValidationException;
 import jakarta.servlet.ServletException;

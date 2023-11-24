@@ -1,4 +1,4 @@
-package servlet;
+package servlet.currency;
 
 import dto.CurrencyDto;
 import exception.ValidationException;
@@ -18,6 +18,7 @@ public class CurrenciesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // TODO: 23.11.2023 Валидация на работу БД 
             req.setAttribute("currencies", currencyService.readAllCurrencies());
             req.getRequestDispatcher(JSPHelper.getPath("currencies")).forward(req, resp);
     }

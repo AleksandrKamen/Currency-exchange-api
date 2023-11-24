@@ -14,8 +14,8 @@ import java.math.BigDecimal;
 public class ExchangeRateEntity {
 
     private Integer id;
-    private Integer baseCurrencyId;
-    private Integer targetCurrencyId;
+    private CurrencyEntity baseCurrencyId;
+    private CurrencyEntity targetCurrencyId;
     private BigDecimal rate;
 
 }
