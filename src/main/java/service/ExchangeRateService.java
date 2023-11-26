@@ -1,9 +1,8 @@
 package service;
 
 import dao.ExchangeRateDao;
-import dto.CurrencyDto;
-import dto.ExchangeRateDto;
-import entity.CurrencyEntity;
+import dto.CreateExchangeRateDto;
+import dto.ReadExchangeRateDto;
 import entity.ExchangeRateEntity;
 import exception.ValidationException;
 import lombok.AccessLevel;
@@ -12,6 +11,7 @@ import lombok.SneakyThrows;
 import mapper.exchange_rate_mapper.CreateExchangeRateMapper;
 import mapper.exchange_rate_mapper.ReadExchangeRateMapper;
 import validator.ValidationResult;
+import validator.exchangerate.CreateExchangeRateValidator;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExchangeRateService {
@@ -20,6 +20,7 @@ public class ExchangeRateService {
     private final ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
     private final CreateExchangeRateMapper createExchangeRateMapper = CreateExchangeRateMapper.getInstance();
     private final ReadExchangeRateMapper readExchangeRateMapper = ReadExchangeRateMapper.getInstance();
+    private final CreateExchangeRateValidator createExchangeRateValidator = CreateExchangeRateValidator.getInstance();
 
 
     public Object[] readAllExchangeRates(){
@@ -30,21 +31,14 @@ public class ExchangeRateService {
     }
 
     @SneakyThrows
-    public ExchangeRateDto create(ExchangeRateDto exchangeRateDto){
-//        ValidationResult validationResult = createCurrencyValidator.isValid(currencyDto);
-//        if (!validationResult.isValid()){
-//            throw new ValidationException(validationResult.getErrors());
-//        }
+    public CreateExchangeRateDto create(CreateExchangeRateDto exchangeRateDto){
+        ValidationResult validationResult = createExchangeRateValidator.isValid(exchangeRateDto);
+        if (!validationResult.isValid()){
+            throw new ValidationException(validationResult.getErrors());
+        }
         ExchangeRateEntity exchangeRateEntity = createExchangeRateMapper.mapFrom(exchangeRateDto);
         exchangeRateDao.save(exchangeRateEntity);
         return exchangeRateDto;
-
-    }
-
-
-
-    public String[] getCodes(String codes){
-        return new String[]{codes.substring(0,3), codes.substring(3)};
     }
 
 

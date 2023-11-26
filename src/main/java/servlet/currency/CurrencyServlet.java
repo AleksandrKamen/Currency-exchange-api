@@ -18,8 +18,8 @@ public class CurrencyServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         var code = req.getParameter("code");
         try {
-            req.setAttribute("currency", currencyService.readCurrencyByCode(code));
-            req.getRequestDispatcher(JSPUtil.getPath("currency")).forward(req, resp);
+                req.setAttribute("currency", currencyService.readCurrencyByCode(code));
+                req.getRequestDispatcher(JSPUtil.getPath("currency")).forward(req, resp);
         } catch (ValidationException validationException){
             req.setAttribute("errors", validationException.getErrors());
             req.getRequestDispatcher(JSPUtil.getPath("currency")).forward(req, resp);

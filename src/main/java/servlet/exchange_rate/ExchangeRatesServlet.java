@@ -1,6 +1,8 @@
 package servlet.exchange_rate;
 
-import dto.ExchangeRateDto;
+import dto.CreateExchangeRateDto;
+import dto.ReadExchangeRateDto;
+import exception.ValidationException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,24 +21,28 @@ public class ExchangeRatesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO: 23.11.2023 Валидация на работу бд 
-        req.setAttribute("exchangeRates", exchangeRateService.readAllExchangeRates());
-        req.getRequestDispatcher(JSPUtil.getPath("exchangeRates")).forward(req, resp);
+            req.setAttribute("exchangeRates", exchangeRateService.readAllExchangeRates());
+            req.getRequestDispatcher(JSPUtil.getPath("exchangeRates")).forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        var codes = exchangeRateService.getCodes(req.getParameter("codes"));
-
-        ExchangeRateDto exchangeRateDto = ExchangeRateDto.builder()
-                .baseCurrency(req.getParameter("baseCurrency"))
-                .targetCurrency(req.getParameter("targetCurrency"))
-                .rate(new BigDecimal(req.getParameter("rate")))
-                .build();
-
-        var newExchangeRate = exchangeRateService.create(exchangeRateDto);
-        req.setAttribute("newExchangeRate", newExchangeRate);
-        doGet(req, resp);
+            CreateExchangeRateDto exchangeRateDto = CreateExchangeRateDto.builder()
+                    .baseCurrencyCode(req.getParameter("baseCurrency"))
+                    .targetCurrencyCode(req.getParameter("targetCurrency"))
+                    .rate(new BigDecimal(req.getParameter("rate")))
+                    .build();
+           try {
+               var newExchangeRate = exchangeRateService.create(exchangeRateDto);
+               req.setAttribute("newExchangeRate", newExchangeRate);
+               doGet(req, resp);
+           } catch (ValidationException validationException){
+               req.setAttribute("errors", validationException.getErrors());
+               doGet(req, resp);
+           }
+//        } catch (Exception e){
+//            resp.sendError(500, "Ошибка со стороны сервера");
+//        }
 
 
     }

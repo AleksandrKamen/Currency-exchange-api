@@ -1,13 +1,14 @@
 package mapper.exchange_rate_mapper;
 
 import dao.CurrencyDao;
-import dto.ExchangeRateDto;
+import dto.CreateExchangeRateDto;
+import dto.ReadExchangeRateDto;
 import entity.ExchangeRateEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import mapper.Mapper;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CreateExchangeRateMapper implements Mapper<ExchangeRateDto, ExchangeRateEntity> {
+public class CreateExchangeRateMapper implements Mapper<CreateExchangeRateDto, ExchangeRateEntity> {
     private static final CreateExchangeRateMapper INSTANCE = new CreateExchangeRateMapper();
 
    private final CurrencyDao currencyDao = CurrencyDao.getInstance();
@@ -16,10 +17,10 @@ public class CreateExchangeRateMapper implements Mapper<ExchangeRateDto, Exchang
 
 
     @Override
-    public ExchangeRateEntity mapFrom(ExchangeRateDto object) {
+    public ExchangeRateEntity mapFrom(CreateExchangeRateDto object) {
         return ExchangeRateEntity.builder()
-                .baseCurrencyId(currencyDao.findByCode(object.getBaseCurrency()).get())
-                .targetCurrencyId(currencyDao.findByCode(object.getTargetCurrency()).get())
+                .baseCurrencyId(currencyDao.findByCode(object.getBaseCurrencyCode()).get())
+                .targetCurrencyId(currencyDao.findByCode(object.getTargetCurrencyCode()).get())
                 .rate(object.getRate())
                 .build();
     }

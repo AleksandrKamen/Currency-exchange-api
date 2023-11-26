@@ -7,9 +7,8 @@ import java.math.BigDecimal;
 
 @Value
 @Builder
-public class ExchangeRateDto {
-    private Integer id;
-    private String baseCurrency;
-    private String targetCurrency;
+public class CreateExchangeRateDto {
+    private String baseCurrencyCode;
+    private String targetCurrencyCode;
     private BigDecimal rate;
 }

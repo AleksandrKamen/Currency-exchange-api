@@ -35,13 +35,22 @@ public class CurrencyService {
      }
 
      public CurrencyDto readCurrencyByCode(String code){
-         ValidationResult validationResult = readCurrencyValidator.isValid(code);
+         ValidationResult validationResult = readCurrencyValidator.isValidCode(code);
          if (!validationResult.isValid()){
              throw new ValidationException(validationResult.getErrors());
          }
          return currencyDao.findByCode(code)
                  .map(readCurrencyMapper::mapFrom).get();
      }
+    public Object readCurrencyByname(String name) {
+        ValidationResult validationResult = readCurrencyValidator.isValidName(name);
+        if (!validationResult.isValid()){
+            throw new ValidationException(validationResult.getErrors());
+        }
+        return currencyDao.findByName(name)
+                .map(readCurrencyMapper::mapFrom).get();
+
+    }
 
 
 
@@ -67,5 +76,6 @@ public String mapDto(CurrencyDto currencyDto){
 
 
     public static CurrencyService getInstance(){return INSTANCE;}
+
 
 }

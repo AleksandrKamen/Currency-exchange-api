@@ -1,21 +1,23 @@
 package mapper.exchange_rate_mapper;
 
-import dto.ExchangeRateDto;
+import dto.ReadExchangeRateDto;
 import entity.ExchangeRateEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import mapper.Mapper;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ReadExchangeRateMapper implements Mapper<ExchangeRateEntity, ExchangeRateDto> {
+public class ReadExchangeRateMapper implements Mapper<ExchangeRateEntity, ReadExchangeRateDto> {
     private static final ReadExchangeRateMapper INSTANCE = new ReadExchangeRateMapper();
 
     public static ReadExchangeRateMapper getInstance(){return INSTANCE;}
     @Override
-    public ExchangeRateDto mapFrom(ExchangeRateEntity object) {
-        return ExchangeRateDto.builder()
+    public ReadExchangeRateDto mapFrom(ExchangeRateEntity object) {
+        return ReadExchangeRateDto.builder()
                 .id(object.getId())
-                .baseCurrency(object.getBaseCurrencyId().getFullName())
-                .targetCurrency(object.getTargetCurrencyId().getFullName())
+                .baseCurrencyName(object.getBaseCurrencyId().getFullName())
+                .targetCurrencyName(object.getTargetCurrencyId().getFullName())
+                .baseCurrencyCode(object.getBaseCurrencyId().getCode())
+                .targetCurrencyCode(object.getTargetCurrencyId().getCode())
                 .rate(object.getRate())
                 .build();
     }
