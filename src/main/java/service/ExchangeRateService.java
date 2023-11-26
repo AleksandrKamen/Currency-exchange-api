@@ -15,7 +15,7 @@ import validator.ValidationResult;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExchangeRateService {
-
+    // TODO: 24.11.2023 Валидация на уровне сревиса
     private static final ExchangeRateService INSTANCE = new ExchangeRateService();
     private final ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
     private final CreateExchangeRateMapper createExchangeRateMapper = CreateExchangeRateMapper.getInstance();

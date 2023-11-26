@@ -1,9 +1,10 @@
-package validator;
+package validator.currency;
 
 import dao.CurrencyDao;
-import dto.CurrencyDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import validator.Error;
+import validator.ValidationResult;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReadCurrencyValidator{
@@ -15,7 +16,10 @@ public class ReadCurrencyValidator{
         ValidationResult validationResult = new ValidationResult();
         if (code == null){
             validationResult.add(Error.of(404, "Валюта не выбрана (не задан код валюты)"));
-        } else if (!currencyDao.findByCode(code).isPresent()){
+        } else if(code.length() != 3){
+            validationResult.add(Error.of(404, "Код указан неккорректно - количество символов не равно 3"));
+        }
+        else if (!currencyDao.findByCode(code).isPresent()){
             validationResult.add(Error.of(404, "Валюта с данным кодом не найдена"));
         }
 

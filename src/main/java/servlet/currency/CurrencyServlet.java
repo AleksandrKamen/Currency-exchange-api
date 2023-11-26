@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.CurrencyService;
-import util.JSPHelper;
+import util.JSPUtil;
 
 import java.io.IOException;
 
@@ -19,10 +19,10 @@ public class CurrencyServlet extends HttpServlet {
         var code = req.getParameter("code");
         try {
             req.setAttribute("currency", currencyService.readCurrencyByCode(code));
-            req.getRequestDispatcher(JSPHelper.getPath("currency")).forward(req, resp);
+            req.getRequestDispatcher(JSPUtil.getPath("currency")).forward(req, resp);
         } catch (ValidationException validationException){
             req.setAttribute("errors", validationException.getErrors());
-            req.getRequestDispatcher(JSPHelper.getPath("currency")).forward(req, resp);
+            req.getRequestDispatcher(JSPUtil.getPath("currency")).forward(req, resp);
         }
     }
 }

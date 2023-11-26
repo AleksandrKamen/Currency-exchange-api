@@ -58,7 +58,7 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
     @SneakyThrows
     @Override
     public CurrencyEntity save(CurrencyEntity entity) {
-        try (Connection connection = JDBCUtil.getConnection();
+        try (Connection connection = JDBCUtil.get();
             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_CURRENCY_SQL)) {
             preparedStatement.setString(1,entity.getCode());
             preparedStatement.setString(2,entity.getFullName());
@@ -71,7 +71,7 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
     @Override
     public List<CurrencyEntity> findAll() {
         ArrayList<CurrencyEntity> currencyEntities = new ArrayList<>();
-        try (Connection connection = JDBCUtil.getConnection();
+        try (Connection connection = JDBCUtil.get();
             PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_CURRENCIES_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
@@ -86,7 +86,7 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
     @Override
     public Optional<CurrencyEntity> findById(Integer id) {
         CurrencyEntity currency = null;
-        try (Connection connection = JDBCUtil.getConnection();
+        try (Connection connection = JDBCUtil.get();
             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_CURRENCY_SQL)) {
             preparedStatement.setInt(1,id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -100,7 +100,7 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
     @SneakyThrows
     public Optional<CurrencyEntity> findByCode(String code) {
         CurrencyEntity currency = null;
-        try (Connection connection = JDBCUtil.getConnection();
+        try (Connection connection = JDBCUtil.get();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_CODE_CURRENCY_SQL)) {
             preparedStatement.setString(1,code);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -114,7 +114,7 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
     @SneakyThrows
     public Optional<CurrencyEntity> findByName(String name) {
         CurrencyEntity currency = null;
-        try (Connection connection = JDBCUtil.getConnection();
+        try (Connection connection = JDBCUtil.get();
             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_NAME_CURRENCY_SQL)) {
             preparedStatement.setString(1,name);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -127,7 +127,7 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
     }    @SneakyThrows
     public Optional<CurrencyEntity> findBySign(String sign) {
         CurrencyEntity currency = null;
-        try (Connection connection = JDBCUtil.getConnection();
+        try (Connection connection = JDBCUtil.get();
             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_SIGN_CURRENCY_SQL)) {
             preparedStatement.setString(1,sign);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -141,7 +141,7 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
     @SneakyThrows
     @Override
     public CurrencyEntity update(CurrencyEntity entity, Integer id) {
-        try (Connection connection = JDBCUtil.getConnection();
+        try (Connection connection = JDBCUtil.get();
             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_CURRENCY_BY_ID_SQL)) {
             preparedStatement.setString(1,entity.getCode());
             preparedStatement.setString(2,entity.getFullName());
@@ -154,7 +154,7 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
     @SneakyThrows
     @Override
     public boolean delete(Integer id) {
-        try (Connection connection = JDBCUtil.getConnection();
+        try (Connection connection = JDBCUtil.get();
            PreparedStatement preparedStatement = connection.prepareStatement(DELETE__CURRENCY_BY_ID_SQL)) {
            preparedStatement.setInt(1,id);
            return preparedStatement.executeUpdate() > 0;
@@ -163,7 +163,7 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
     }
     @SneakyThrows
     public boolean deleteByCode(String code) {
-        try (Connection connection = JDBCUtil.getConnection();
+        try (Connection connection = JDBCUtil.get();
            PreparedStatement preparedStatement = connection.prepareStatement(DELETE__CURRENCY_BY_CODE_SQL)) {
            preparedStatement.setString(1,code);
            return preparedStatement.executeUpdate() > 0;

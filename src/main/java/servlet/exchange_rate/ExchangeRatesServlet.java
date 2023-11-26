@@ -1,14 +1,13 @@
 package servlet.exchange_rate;
 
 import dto.ExchangeRateDto;
-import entity.ExchangeRateEntity;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.ExchangeRateService;
-import util.JSPHelper;
+import util.JSPUtil;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -22,7 +21,7 @@ public class ExchangeRatesServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // TODO: 23.11.2023 Валидация на работу бд 
         req.setAttribute("exchangeRates", exchangeRateService.readAllExchangeRates());
-        req.getRequestDispatcher(JSPHelper.getPath("exchangeRates")).forward(req, resp);
+        req.getRequestDispatcher(JSPUtil.getPath("exchangeRates")).forward(req, resp);
     }
 
     @Override

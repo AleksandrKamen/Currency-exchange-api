@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.CurrencyService;
-import util.JSPHelper;
+import util.JSPUtil;
 
 import java.io.IOException;
 
@@ -20,7 +20,7 @@ public class CurrenciesServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // TODO: 23.11.2023 Валидация на работу БД 
             req.setAttribute("currencies", currencyService.readAllCurrencies());
-            req.getRequestDispatcher(JSPHelper.getPath("currencies")).forward(req, resp);
+            req.getRequestDispatcher(JSPUtil.getPath("currencies")).forward(req, resp);
     }
 
     @Override

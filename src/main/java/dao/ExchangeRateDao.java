@@ -68,7 +68,7 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
     @SneakyThrows
     @Override
     public ExchangeRateEntity save(ExchangeRateEntity entity) {
-        try (Connection connection = JDBCUtil.getConnection();
+        try (Connection connection = JDBCUtil.get();
             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_EXCHANGERATE_SQL)) {
             preparedStatement.setInt(1,entity.getBaseCurrencyId().getId());
             preparedStatement.setInt(2,entity.getTargetCurrencyId().getId());
@@ -81,7 +81,7 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
     @Override
     public List<ExchangeRateEntity> findAll() {
         ArrayList<ExchangeRateEntity> exchangeRateEntities = new ArrayList<>();
-        try (Connection connection = JDBCUtil.getConnection();
+        try (Connection connection = JDBCUtil.get();
             PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_EXCHANGERATES_SQL)) {
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){
@@ -96,7 +96,7 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
     @Override
     public Optional<ExchangeRateEntity> findById(Integer id) {
         ExchangeRateEntity exchangeRateEntity = null;
-        try (Connection connection = JDBCUtil.getConnection();
+        try (Connection connection = JDBCUtil.get();
             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_EXCHANGERATE_SQL)) {
             preparedStatement.setInt(1,id);
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -109,7 +109,7 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
     @SneakyThrows
     public Optional<ExchangeRateEntity> findByCodesCurrencies(String codeBase, String codeTarget) {
         ExchangeRateEntity exchangeRateEntity = null;
-        try (Connection connection = JDBCUtil.getConnection();
+        try (Connection connection = JDBCUtil.get();
             PreparedStatement preparedStatement = connection.prepareStatement(FIND_EXCHANGERATE_BY_CODE_CURRENCYS_SQL)) {
             preparedStatement.setString(1,codeBase);
             preparedStatement.setString(2,codeTarget);
@@ -126,7 +126,7 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
     @SneakyThrows
     @Override
     public ExchangeRateEntity update(ExchangeRateEntity entity, Integer id) {
-        try (Connection connection = JDBCUtil.getConnection();
+        try (Connection connection = JDBCUtil.get();
             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_EXCHANGERATE_BY_ID_SQL)) {
             preparedStatement.setBigDecimal(1,entity.getRate());
             preparedStatement.setInt(2,id);
@@ -136,7 +136,7 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
     }
     @SneakyThrows
     public Optional<ExchangeRateEntity> updateByCodesCurrencies(BigDecimal rate, String codeBase, String codeTarget) {
-        try (Connection connection = JDBCUtil.getConnection();
+        try (Connection connection = JDBCUtil.get();
             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_EXCHANGERATE_BY_CODE_CURRENCYS_SQL)) {
             preparedStatement.setBigDecimal(1,rate);
             preparedStatement.setString(2,codeBase);
@@ -148,7 +148,7 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
     @SneakyThrows
     @Override
     public boolean delete(Integer id) {
-        try (Connection connection = JDBCUtil.getConnection();
+        try (Connection connection = JDBCUtil.get();
             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_EXCHANGERATE_BY_ID_SQL)) {
             preparedStatement.setInt(1,id);
             return preparedStatement.executeUpdate() > 0;
@@ -157,7 +157,7 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
 
     @SneakyThrows
     public boolean deleteByCodesCurrency(String codeBase, String codeTarget) {
-        try (Connection connection = JDBCUtil.getConnection();
+        try (Connection connection = JDBCUtil.get();
             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_EXCHANGERATE_BY_CODES_CURRENCIES_SQL)) {
             preparedStatement.setString(1,codeBase);
             preparedStatement.setString(2,codeTarget);
