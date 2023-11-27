@@ -18,7 +18,7 @@ public class CurrenciesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO: 23.11.2023 Валидация на работу БД 
+
             req.setAttribute("currencies", currencyService.readAllCurrencies());
             req.getRequestDispatcher(JSPUtil.getPath("currencies")).forward(req, resp);
     }
@@ -40,6 +40,8 @@ public class CurrenciesServlet extends HttpServlet {
         } catch (ValidationException validationException){
             req.setAttribute("errors", validationException.getErrors());
             doGet(req, resp);
+        } catch (Exception e){
+            resp.sendError(500, "Ошибка со стороны сервера");
         }
 
     }

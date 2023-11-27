@@ -23,10 +23,10 @@ public class CreateExchangeRateValidator implements Validator<CreateExchangeRate
         ValidationResult validationResult = new ValidationResult();
 
         if (!currencyDao.findByCode(object.getBaseCurrencyCode()).isPresent() || !currencyDao.findByCode(object.getTargetCurrencyCode()).isPresent()){
-            validationResult.add(Error.of(409,"Указаных валют нет в базе данных"));
+            validationResult.add(Error.of(409,"Указанные валюты отсутствуют в базе данных"));
         }
-        if (exchangeRateDao.findByCodesCurrencies(object.getBaseCurrencyCode(), object.getTargetCurrencyCode()).isPresent()){
-            validationResult.add(Error.of(409,"Указаны некорректные или повторяющиеся данные - повторите попытку снова"));
+        if (object.getBaseCurrencyCode().equals(object.getTargetCurrencyCode())){
+            validationResult.add(Error.of(409,"Дублирование валюты"));
         }
         return validationResult;
     }

@@ -27,22 +27,30 @@ public class ExchangeRatesServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
             CreateExchangeRateDto exchangeRateDto = CreateExchangeRateDto.builder()
                     .baseCurrencyCode(req.getParameter("baseCurrency"))
                     .targetCurrencyCode(req.getParameter("targetCurrency"))
                     .rate(new BigDecimal(req.getParameter("rate")))
                     .build();
            try {
-               var newExchangeRate = exchangeRateService.create(exchangeRateDto);
-               req.setAttribute("newExchangeRate", newExchangeRate);
-               doGet(req, resp);
-           } catch (ValidationException validationException){
+               if (exchangeRateService.isNew(exchangeRateDto)){
+                   var update = exchangeRateService.update(exchangeRateDto);
+                   req.setAttribute("update", update);
+                   doGet(req, resp);
+               }
+               else {
+                   var newExchangeRate = exchangeRateService.create(exchangeRateDto);
+                   req.setAttribute("newExchangeRate", newExchangeRate);
+                   doGet(req, resp);
+               }
+           }catch (ValidationException validationException){
                req.setAttribute("errors", validationException.getErrors());
                doGet(req, resp);
            }
-//        } catch (Exception e){
-//            resp.sendError(500, "Ошибка со стороны сервера");
-//        }
+            catch (Exception e){
+            resp.sendError(500, "Ошибка со стороны сервера");
+        }
 
 
     }

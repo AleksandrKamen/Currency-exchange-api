@@ -61,7 +61,7 @@ sourceConnections.add(connection);
 
 }
 
-    private static Connection getConnection(){
+    public static Connection getConnection(){
         Connection connection = null;
         try {
             connection =  DriverManager.getConnection(

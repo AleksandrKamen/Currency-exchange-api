@@ -23,9 +23,7 @@
         <li>
          <a href="currency?code=${currencies.code}">${currencies.name}</a>
         <br>
-        <br>
         </li>
-
     </c:forEach>
 </ul>
 
@@ -33,13 +31,13 @@
 <h2>Добавить валюту</h2>
 <form action="/currencies" method="post" enctype="application/x-www-form-urlencoded">
     <label for="name"> Currency name:
-        <input type="text" name="name" id="name" required>
+        <input type="text" name="name" id="name" maxlength="50" required>
     </label> <br>
-    <label for="code"> Code:
-        <input type="text" name="code" id="code" required>
+    <label for="code"> Code(3 letters):
+        <input type="text" name="code" id="code" maxlength="3" required>
     </label> <br>
     <label for="sign"> Sign:
-        <input type="text" name="sign" id="sign" required>
+        <input type="text" name="sign" id="sign" maxlength="3" required>
     </label> <br>
     <button type="submit">Send</button>
 
@@ -47,6 +45,7 @@
         <div style="color: red">
             <c:forEach var="error" items="${requestScope.errors}">
                 <samp>${error.message}</samp>
+                <br>
             </c:forEach>
 
         </div>

@@ -59,7 +59,7 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
                                                  """;
     private final String UPDATE_EXCHANGERATE_BY_ID_SQL = """
                                                 update exchangerates set rate = ?
-                                                where id = ?
+                                                where baseCurrencyId = ? and targetCurrencyId = ?
                                                  """;
     private final String UPDATE_EXCHANGERATE_BY_CODE_CURRENCYS_SQL = """
                                                 update exchangerates set rate = ?
@@ -125,11 +125,12 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
 
     @SneakyThrows
     @Override
-    public ExchangeRateEntity update(ExchangeRateEntity entity, Integer id) {
+    public ExchangeRateEntity update(ExchangeRateEntity entity) {
         try (Connection connection = JDBCUtil.get();
             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_EXCHANGERATE_BY_ID_SQL)) {
             preparedStatement.setBigDecimal(1,entity.getRate());
-            preparedStatement.setInt(2,id);
+            preparedStatement.setInt(2,entity.getBaseCurrencyId().getId());
+            preparedStatement.setInt(3, entity.getTargetCurrencyId().getId());
             preparedStatement.executeUpdate();
             return entity;
         }
