@@ -53,8 +53,6 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
                                                 update currencies set code = ?, fullName = ?, sign = ? 
                                                 where code = ?
                                                  """;
-
-
     @SneakyThrows
     @Override
     public CurrencyEntity save(CurrencyEntity entity) {
@@ -65,7 +63,6 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
             preparedStatement.setString(3,entity.getSign());
             preparedStatement.executeUpdate();
             return entity;
-
         }
     }
     @SneakyThrows
@@ -81,8 +78,6 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
             return currencyEntities;
         }
     }
-
-
     @SneakyThrows
     @Override
     public Optional<CurrencyEntity> findById(Integer id) {
@@ -94,9 +89,7 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
            if (resultSet.next()){
                currency = currencyBuild(resultSet);
            }
-
             return Optional.ofNullable(currency);
-
         }
     }
     @SneakyThrows
@@ -110,7 +103,6 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
                currency = currencyBuild(resultSet);
            }
             return Optional.ofNullable(currency);
-
         }
     }
     @SneakyThrows
@@ -124,9 +116,9 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
                 currency = currencyBuild(resultSet);
             }
             return Optional.ofNullable(currency);
-
         }
-    }    @SneakyThrows
+    }
+    @SneakyThrows
     public Optional<CurrencyEntity> findBySign(String sign) {
         CurrencyEntity currency = null;
         try (Connection connection = JDBCUtil.getConnection();
@@ -137,7 +129,6 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
                 currency = currencyBuild(resultSet);
             }
             return Optional.ofNullable(currency);
-
         }
     }
     @SneakyThrows
@@ -161,7 +152,6 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
            preparedStatement.setInt(1,id);
            return preparedStatement.executeUpdate() > 0;
         }
-
     }
     @SneakyThrows
     public boolean deleteByCode(String code) {
@@ -170,10 +160,7 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
            preparedStatement.setString(1,code);
            return preparedStatement.executeUpdate() > 0;
         }
-
     }
-
-
     private static CurrencyEntity currencyBuild(ResultSet resultSet) throws SQLException {
        return CurrencyEntity.builder()
                 .id(resultSet.getInt("id"))

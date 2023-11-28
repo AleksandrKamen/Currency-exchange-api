@@ -18,7 +18,6 @@ public class CurrenciesServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
             req.setAttribute("currencies", currencyService.readAllCurrencies());
             req.getRequestDispatcher(JSPUtil.getPath("currencies")).forward(req, resp);
     }
@@ -31,7 +30,6 @@ public class CurrenciesServlet extends HttpServlet {
                 .name(req.getParameter("name"))
                 .sign(req.getParameter("sign"))
                 .build();
-
         try  {
             var currency = currencyService.create(currencyDto);
             req.setAttribute("newCurrency", currency);
@@ -43,6 +41,5 @@ public class CurrenciesServlet extends HttpServlet {
         } catch (Exception e){
             resp.sendError(500, "Ошибка со стороны сервера");
         }
-
     }
 }

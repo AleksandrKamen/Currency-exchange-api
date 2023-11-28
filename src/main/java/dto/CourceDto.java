@@ -15,6 +15,4 @@ public class CourceDto {
     private BigDecimal rate;
     private Double amount;
     private Double result;
-
-
 }

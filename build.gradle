@@ -28,13 +28,9 @@ dependencies {
   compileOnly "org.projectlombok:${lombokVersion}"
   annotationProcessor "org.projectlombok:${lombokVersion}"
   implementation 'org.slf4j:slf4j-log4j12:2.0.9'
-  implementation 'com.fasterxml.jackson.core:jackson-databind:2.16.0'
   implementation 'org.xerial:sqlite-jdbc:3.44.0.0'
   implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api:3.0.0'
   implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl:3.0.1'
-
-
-
 
   testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")

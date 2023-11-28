@@ -12,7 +12,6 @@ import validator.Validator;
 public class CreateCurrencyValidator implements Validator<CurrencyDto> {
     private static final CreateCurrencyValidator INSTANCE = new CreateCurrencyValidator();
     private  final CurrencyDao currencyDao = CurrencyDao.getInstance();
-
     @Override
     public ValidationResult isValid(CurrencyDto object) {
       ValidationResult validationResult = new ValidationResult();
@@ -29,6 +28,5 @@ public class CreateCurrencyValidator implements Validator<CurrencyDto> {
       }
       return validationResult;
     }
-
     public static CreateCurrencyValidator getInstance(){return INSTANCE;}
 }

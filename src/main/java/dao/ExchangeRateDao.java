@@ -83,7 +83,6 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
                                                  select id, code, fullName, sign from currencies
                                                  where code = ? or code = ?
                                                  """;
-
     @SneakyThrows
     public List<CurrencyEntity> getCurrenciesByCodes(String from, String to){
         var currencyEntities = new ArrayList<CurrencyEntity>();
@@ -102,13 +101,7 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
             }
             return currencyEntities;
         }
-
-
-
     }
-
-
-
     @SneakyThrows
     public Optional<BigDecimal> getCrossCource(String from, String to) {
         try (Connection connection = JDBCUtil.getConnection();
@@ -120,7 +113,6 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
             return Optional.ofNullable(resultSet.getBigDecimal("cource"));
         }
     }
-
     @SneakyThrows
     @Override
     public ExchangeRateEntity save(ExchangeRateEntity entity) {
@@ -146,7 +138,6 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
             return exchangeRateEntities;
         }
     }
-
     @SneakyThrows
     @Override
     public Optional<ExchangeRateEntity> findById(Integer id) {
@@ -175,7 +166,6 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
             return Optional.ofNullable(exchangeRateEntity);
         }
     }
-
     @SneakyThrows
     @Override
     public ExchangeRateEntity update(ExchangeRateEntity entity) {
@@ -208,7 +198,6 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
             return preparedStatement.executeUpdate() > 0;
         }
     }
-
     @SneakyThrows
     public boolean deleteByCodesCurrency(String codeBase, String codeTarget) {
         try (Connection connection = JDBCUtil.getConnection();
@@ -218,7 +207,6 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
             return preparedStatement.executeUpdate() > 0;
         }
     }
-
     private ExchangeRateEntity exchangeRateBuild(ResultSet resultSet) throws SQLException {
 
         var baseCurrency = CurrencyEntity.builder()

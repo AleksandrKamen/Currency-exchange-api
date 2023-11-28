@@ -1,11 +1,9 @@
 package service;
 
-import dao.CurrencyDao;
 import dao.ExchangeRateDao;
 import dto.CourceDto;
 import dto.CreateExchangeRateDto;
 import dto.ReadExchangeRateDto;
-import entity.CurrencyEntity;
 import entity.ExchangeRateEntity;
 import exception.ValidationException;
 import lombok.AccessLevel;
@@ -31,16 +29,12 @@ public class ExchangeRateService {
     private final CreateExchangeRateValidator createExchangeRateValidator = CreateExchangeRateValidator.getInstance();
     private final ReadExchangeRateValidator readExchangeRateValidator = ReadExchangeRateValidator.getInstance();
 
-
-
-
-    public Object[] readAllExchangeRates(){
+    public Object[] findAllExchangeRates(){
        return exchangeRateDao.findAll()
                                 .stream()
                                    .map(readExchangeRateMapper::mapFrom)
                                       .toArray();
     }
-
     public ReadExchangeRateDto findExchangeRate(String baseCode, String targetCode){
 
         var currenciesByCodes = exchangeRateDao.getCurrenciesByCodes(baseCode, targetCode);
@@ -67,7 +61,6 @@ public class ExchangeRateService {
         var toCurrency = currenciesByCodes.stream().filter(currencyEntity -> currencyEntity.getCode().equals(to)).findFirst().get();
         BigDecimal rate;
 
-        //Получение прямого курса
         var exchangeRate = exchangeRateDao.findByCodesCurrencies(from, to);
         var exchangeRateRevers = exchangeRateDao.findByCodesCurrencies(to, from);
         var crossCource = exchangeRateDao.getCrossCource(from, to);
@@ -76,13 +69,11 @@ public class ExchangeRateService {
             var ex= exchangeRate.get();
             rate = exchangeRate.get().getRate();
         }
-        //Получение Обратного курса
 
        else if (exchangeRateRevers.isPresent()){
             var exReverce = exchangeRateRevers.get();
             rate = getReverseRate(exReverce.getRate());
         }
-        //Получение кросс курса
        else if (crossCource.isPresent()){
            rate = crossCource.get();
         }
@@ -101,7 +92,7 @@ public class ExchangeRateService {
     }
 
     @SneakyThrows
-    public CreateExchangeRateDto create(CreateExchangeRateDto exchangeRateDto){
+    public CreateExchangeRateDto createExchangeRate(CreateExchangeRateDto exchangeRateDto){
         ValidationResult validationResult = createExchangeRateValidator.isValid(exchangeRateDto);
 
         if (!validationResult.isValid()){
@@ -113,7 +104,7 @@ public class ExchangeRateService {
     }
 
     @SneakyThrows
-    public CreateExchangeRateDto update(CreateExchangeRateDto createExchangeRateDto){
+    public CreateExchangeRateDto updateExchangeRate(CreateExchangeRateDto createExchangeRateDto){
         String baseCode = createExchangeRateDto.getBaseCurrencyCode(), targetCode = createExchangeRateDto.getTargetCurrencyCode();
 
         if (exchangeRateDao.findByCodesCurrencies(createExchangeRateDto.getBaseCurrencyCode(), createExchangeRateDto
@@ -129,18 +120,15 @@ public class ExchangeRateService {
         return createExchangeRateDto;
     }
 
-
     public boolean isNew(CreateExchangeRateDto exchangeRateDto){
         return exchangeRateDao.findByCodesCurrencies(exchangeRateDto.getBaseCurrencyCode(), exchangeRateDto.getTargetCurrencyCode())
                 .isPresent()
-        || exchangeRateDao.findByCodesCurrencies(exchangeRateDto.getTargetCurrencyCode(), exchangeRateDto.getBaseCurrencyCode())
+            || exchangeRateDao.findByCodesCurrencies(exchangeRateDto.getTargetCurrencyCode(), exchangeRateDto.getBaseCurrencyCode())
                 .isPresent();
     }
 
     public BigDecimal getReverseRate(BigDecimal rate){
         return BigDecimal.valueOf(1/rate.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP);
     }
-
     public static ExchangeRateService getInstance(){return INSTANCE;}
-
 }

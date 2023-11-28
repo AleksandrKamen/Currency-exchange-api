@@ -1,9 +1,7 @@
 package validator.exchangerate;
 
 import dao.CurrencyDao;
-import dao.ExchangeRateDao;
 import dto.CreateExchangeRateDto;
-import dto.ReadExchangeRateDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import validator.Error;
@@ -12,12 +10,8 @@ import validator.Validator;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CreateExchangeRateValidator implements Validator<CreateExchangeRateDto> {
-
     private static final CreateExchangeRateValidator INSTANCE = new CreateExchangeRateValidator();
-    private final ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
     private final CurrencyDao currencyDao = CurrencyDao.getInstance();
-
-
     @Override
     public ValidationResult isValid(CreateExchangeRateDto object) {
         ValidationResult validationResult = new ValidationResult();
@@ -30,7 +24,5 @@ public class CreateExchangeRateValidator implements Validator<CreateExchangeRate
         }
         return validationResult;
     }
-
-
     public static CreateExchangeRateValidator getInstance(){return INSTANCE;}
 }

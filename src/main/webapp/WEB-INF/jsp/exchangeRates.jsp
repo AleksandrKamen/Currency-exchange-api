@@ -7,7 +7,6 @@
 </head>
 
 <body>
-
 <h1>Доступные обменные курсы</h1>
 
 <ul>
@@ -22,6 +21,7 @@
 
     </c:forEach>
 </ul>
+
 <div style="position: absolute; top: 0; right: 0">
 <%@ include file="headers/headerMenu.jsp"%>
 <h2>Добавить/Обновить обменный курс</h2>
@@ -43,9 +43,7 @@
                 <samp>${error.message}</samp>
                 <br>
             </c:forEach>
-
         </div>
-
     </c:if>
 
     <c:if test="${not empty requestScope.newExchangeRate}">
@@ -62,10 +60,8 @@
         </div>
     </c:if>
 
-
 </form>
 </div>
-
 
 <div style="position: absolute; bottom: 0; right: 0">
     <h2>Произвести расчет курса</h2>
@@ -87,15 +83,11 @@
                     <samp>${error.message}</samp>
                     <br>
                 </c:forEach>
-
             </div>
-
         </c:if>
 
     </form>
 </div>
-
-
 
 </body>
 </html>

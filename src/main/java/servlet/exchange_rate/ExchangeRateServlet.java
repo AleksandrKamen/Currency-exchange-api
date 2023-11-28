@@ -1,6 +1,5 @@
 package servlet.exchange_rate;
 
-import dto.ReadExchangeRateDto;
 import exception.ValidationException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -46,6 +45,8 @@ public class ExchangeRateServlet extends HttpServlet {
     } catch (ValidationException validationException){
         req.setAttribute("errors", validationException.getErrors());
         req.getRequestDispatcher(JSPUtil.getPath("exchangeRate")).forward(req, resp);
+    } catch (Exception e){
+        resp.sendError(500,"Ошибка на стороне сервера");
     }
 
     }

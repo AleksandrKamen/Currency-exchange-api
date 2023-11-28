@@ -9,13 +9,9 @@ import mapper.Mapper;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CreateExchangeRateMapper implements Mapper<CreateExchangeRateDto, ExchangeRateEntity> {
-    private static final CreateExchangeRateMapper INSTANCE = new CreateExchangeRateMapper();
-
-   private  final ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
-
-    public static CreateExchangeRateMapper getInstance(){return INSTANCE;}
-
-
+   private static final CreateExchangeRateMapper INSTANCE = new CreateExchangeRateMapper();
+   private final ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
+   public static CreateExchangeRateMapper getInstance(){return INSTANCE;}
     @Override
     public ExchangeRateEntity mapFrom(CreateExchangeRateDto object) {
         var currencies = exchangeRateDao.getCurrenciesByCodes(object.getBaseCurrencyCode(), object.getTargetCurrencyCode());
@@ -27,7 +23,6 @@ public class CreateExchangeRateMapper implements Mapper<CreateExchangeRateDto, E
         var targetCurrency = currencies.stream()
                 .filter(currencyEntity -> currencyEntity.getCode().equals(object.getTargetCurrencyCode()))
                 .findFirst().get();
-
 
         return ExchangeRateEntity.builder()
                 .baseCurrencyId(baseCurrency)

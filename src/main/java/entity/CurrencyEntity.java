@@ -2,8 +2,6 @@ package entity;
 
 import lombok.*;
 
-
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -15,8 +13,4 @@ public class CurrencyEntity {
     private String code;
     private String fullName;
     private String sign;
-
-
-
-
 }

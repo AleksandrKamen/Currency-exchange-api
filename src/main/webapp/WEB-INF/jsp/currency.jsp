@@ -17,7 +17,6 @@
         <c:forEach var="error" items="${requestScope.errors}">
             <samp>${error.message}</samp>
         </c:forEach>
-
     </div>
 
 </c:if>

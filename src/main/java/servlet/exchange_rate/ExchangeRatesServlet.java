@@ -1,7 +1,6 @@
 package servlet.exchange_rate;
 
 import dto.CreateExchangeRateDto;
-import dto.ReadExchangeRateDto;
 import exception.ValidationException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -18,10 +17,9 @@ import java.math.BigDecimal;
 public class ExchangeRatesServlet extends HttpServlet {
     private final ExchangeRateService exchangeRateService = ExchangeRateService.getInstance();
 
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-            req.setAttribute("exchangeRates", exchangeRateService.readAllExchangeRates());
+            req.setAttribute("exchangeRates", exchangeRateService.findAllExchangeRates());
             req.getRequestDispatcher(JSPUtil.getPath("exchangeRates")).forward(req, resp);
     }
 
@@ -35,12 +33,12 @@ public class ExchangeRatesServlet extends HttpServlet {
                     .build();
            try {
                if (exchangeRateService.isNew(exchangeRateDto)){
-                   var update = exchangeRateService.update(exchangeRateDto);
+                   var update = exchangeRateService.updateExchangeRate(exchangeRateDto);
                    req.setAttribute("update", update);
                    doGet(req, resp);
                }
                else {
-                   var newExchangeRate = exchangeRateService.create(exchangeRateDto);
+                   var newExchangeRate = exchangeRateService.createExchangeRate(exchangeRateDto);
                    req.setAttribute("newExchangeRate", newExchangeRate);
                    doGet(req, resp);
                }
@@ -50,7 +48,5 @@ public class ExchangeRatesServlet extends HttpServlet {
            }catch (Exception e){
             resp.sendError(500, "Ошибка со стороны сервера");
         }
-
-
     }
 }

@@ -10,7 +10,6 @@ import mapper.Mapper;
 public class ReadCurrencyMapper implements Mapper<CurrencyEntity, CurrencyDto> {
 private static final ReadCurrencyMapper INSTANCE = new ReadCurrencyMapper();
 public static ReadCurrencyMapper getInstance(){return INSTANCE;}
-
     @Override
     public CurrencyDto mapFrom(CurrencyEntity object) {
         return CurrencyDto.builder()

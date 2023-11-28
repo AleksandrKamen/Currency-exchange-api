@@ -2,29 +2,21 @@ package util;
 
 import lombok.experimental.UtilityClass;
 
-import java.lang.reflect.Proxy;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-
 
 @UtilityClass
 public class JDBCUtil {
-    private final static String POLL_SIZE_KEY = "poll.size";
     private final static String DRIVER_NAME_KEY = "db.driver";
-    private final static Integer POLL_DEFAULT_SIZE = 10;
-    private static BlockingQueue<Connection> poll;            // Коллекция для прокси соединений
-    private static List<Connection> sourceConnections;      // Коллекция для оригиналов соединений
-
-
+    private static final String db = "Database.sqlite";
+    Connection connection = null;
 
     static {
         loadDriver();
-        initConnectionPool();
     }
 
     private static void loadDriver() {
@@ -34,47 +26,20 @@ public class JDBCUtil {
             throw new RuntimeException(e);
         }
     }
-
-    public static Connection get(){              // Получаем соединение из нашего пула
-        try {
-            return poll.take();
-        } catch (InterruptedException e) {
-            System.out.println("Неудалось получить соединение");
-            throw new RuntimeException(e);
-        }
-    }
-
-private static void initConnectionPool(){
-    var size = PropertiesUtil.get(POLL_SIZE_KEY);
-    var poolSize = size == null?POLL_DEFAULT_SIZE:Integer.parseInt(size);
-    poll = new ArrayBlockingQueue<>(poolSize);
-    sourceConnections = new ArrayList<>(poolSize);
-    for (int i = 0; i <poolSize; i++) {
-    Connection connection = getConnection();
-        var proxyConnection = (Connection) Proxy.newProxyInstance(JDBCUtil.class.getClassLoader(), new Class[]{Connection.class}, // создаем proxy объект для того чтобы при закрытии соединения оно возвращалось обратно в пулл
-                (proxy, method, args) -> method.getName().equals("close")
-                        ? poll.add(connection)
-                        : method.invoke(connection, args));
-poll.add(proxyConnection);
-sourceConnections.add(connection);
-        
-    }
-
-}
-
     public static Connection getConnection(){
-        Connection connection = null;
-        try {
-            connection =  DriverManager.getConnection(
-                    "jdbc:sqlite:C://Users//Сан//IdeaProjects//currency-exchange-api//Database.sqlite");
-        } catch (SQLException e) {
-            System.out.println("Подключение к базе данных не выполнено");
-            throw new RuntimeException(e);
-        }
+
+            try {
+                URL resource  = JDBCUtil.class.getClassLoader().getResource(db);
+                assert resource != null;
+                String path = "jdbc:sqlite:" + new File(resource.toURI()).getAbsolutePath();
+
+                connection = DriverManager.getConnection(path);
+            } catch (SQLException e) {
+                System.out.println("Подключение к базе данных не выполнено");
+                throw new RuntimeException(e);
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
         return connection;
     }
-
-
-
-
 }

@@ -14,5 +14,4 @@ public class ReadExchangeRateDto {
     private String baseCurrencyCode;
     private String targetCurrencyCode;
     private BigDecimal rate;
-
 }

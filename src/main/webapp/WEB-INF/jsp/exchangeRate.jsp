@@ -19,18 +19,14 @@ Rate: ${requestScope.exchangeRate.rate}
     From Currency  ${requestScope.converted.fromCurrencyName},<a href="currency?code=${requestScope.converted.fromCurrencyCode}"> code: ${requestScope.converted.fromCurrencyCode}</a>
     To Currency ${requestScope.converted.toCurrencyName},<a href="currency?code=${requestScope.converted.toCurrencyCode}"> code: ${requestScope.converted.toCurrencyCode}</a>
     Rate:${requestScope.converted.rate}, Amount: ${requestScope.converted.amount} Result = ${requestScope.converted.result}
-
 </c:if>
-
 
 <c:if test="${not empty requestScope.errors}">
     <div style="color: red">
         <c:forEach var="error" items="${requestScope.errors}">
             <samp>${error.message}</samp>
         </c:forEach>
-
     </div>
-
 </c:if>
 
 </body>
