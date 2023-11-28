@@ -5,12 +5,12 @@
         <param name="target" value="System.out"/>
         
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="conversionPattern" value="[%d{HH:mm:ss,SSS}] %p [%c: %L] %m%n"/> <!--Формат вывода сообщений-->
+            <param name="conversionPattern" value="[%d{HH:mm:ss,SSS}] %p [%c: %L] %m%n"/>
         </layout>
     </appender>
     
     <root>
-        <level value="info"/>            <!--Это уровень логирования -->
+        <level value="info"/>
         <appender-ref ref="console"/>
     </root>
 </log4j:configuration>

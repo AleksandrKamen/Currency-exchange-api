@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Alex
-  Date: 22.11.2023
-  Time: 18:21
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
@@ -15,7 +8,7 @@
     <title>Title</title>
 </head>
 <body>
-<%@ include file="header.jsp"  %>
+
 
 <h1>Доступные Валюты</h1>
 <ul>
@@ -28,13 +21,14 @@
 </ul>
 
 <div style="position: absolute; top: 0; right: 0">
+    <%@ include file="headers/headerMenu.jsp"%>
 <h2>Добавить валюту</h2>
 <form action="/currencies" method="post" enctype="application/x-www-form-urlencoded">
     <label for="name"> Currency name:
         <input type="text" name="name" id="name" maxlength="50" required>
     </label> <br>
-    <label for="code"> Code(3 letters):
-        <input type="text" name="code" id="code" maxlength="3" required>
+    <label for="code"> Code:
+        <input type="text" name="code" id="code" minlength="3" maxlength="3" required>
     </label> <br>
     <label for="sign"> Sign:
         <input type="text" name="sign" id="sign" maxlength="3" required>

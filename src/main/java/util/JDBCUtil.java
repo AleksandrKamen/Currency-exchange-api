@@ -15,6 +15,7 @@ import java.util.concurrent.BlockingQueue;
 @UtilityClass
 public class JDBCUtil {
     private final static String POLL_SIZE_KEY = "poll.size";
+    private final static String DRIVER_NAME_KEY = "db.driver";
     private final static Integer POLL_DEFAULT_SIZE = 10;
     private static BlockingQueue<Connection> poll;            // Коллекция для прокси соединений
     private static List<Connection> sourceConnections;      // Коллекция для оригиналов соединений
@@ -28,7 +29,7 @@ public class JDBCUtil {
 
     private static void loadDriver() {
         try {
-            Class.forName("org.sqlite.JDBC");
+            Class.forName(PropertiesUtil.get(DRIVER_NAME_KEY));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }

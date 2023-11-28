@@ -24,7 +24,7 @@ public class CurrencyServlet extends HttpServlet {
             req.setAttribute("errors", validationException.getErrors());
             req.getRequestDispatcher(JSPUtil.getPath("currency")).forward(req, resp);
         } catch (Exception e){
-            resp.sendError(500, "Ошибка со стороны сервера");
+            resp.sendError(500, "Ошибка сервера");
         }
     }
 }

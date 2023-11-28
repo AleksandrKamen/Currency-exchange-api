@@ -1,8 +1,11 @@
 package service;
 
+import dao.CurrencyDao;
 import dao.ExchangeRateDao;
+import dto.CourceDto;
 import dto.CreateExchangeRateDto;
 import dto.ReadExchangeRateDto;
+import entity.CurrencyEntity;
 import entity.ExchangeRateEntity;
 import exception.ValidationException;
 import lombok.AccessLevel;
@@ -16,7 +19,7 @@ import validator.exchangerate.CreateExchangeRateValidator;
 import validator.exchangerate.ReadExchangeRateValidator;
 
 import java.math.BigDecimal;
-import java.util.Optional;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExchangeRateService {
@@ -29,6 +32,8 @@ public class ExchangeRateService {
     private final ReadExchangeRateValidator readExchangeRateValidator = ReadExchangeRateValidator.getInstance();
 
 
+
+
     public Object[] readAllExchangeRates(){
        return exchangeRateDao.findAll()
                                 .stream()
@@ -37,18 +42,62 @@ public class ExchangeRateService {
     }
 
     public ReadExchangeRateDto findExchangeRate(String baseCode, String targetCode){
-        ValidationResult validationResult = new ValidationResult();
+
+        var currenciesByCodes = exchangeRateDao.getCurrenciesByCodes(baseCode, targetCode);
+        ValidationResult validationResult = readExchangeRateValidator.isValid(currenciesByCodes);
+        if (!validationResult.isValid()){
+             throw new  ValidationException(validationResult.getErrors());
+        }
         var exchangeRate = exchangeRateDao.findByCodesCurrencies(baseCode, targetCode);
         var exchangeRateRevers = exchangeRateDao.findByCodesCurrencies(targetCode, baseCode);
 
-        if (!exchangeRate.isPresent() && !exchangeRateRevers.isPresent()){
-           validationResult.add(Error.of(400,"Курс не найден"));
-           throw new  ValidationException(validationResult.getErrors());
-        }
         return exchangeRate.isPresent()?readExchangeRateMapper.mapFrom(exchangeRate.get())
                 :readExchangeRateMapper.mapFrom(exchangeRateRevers.get());
+    }
 
+    public CourceDto makeExchange(String from, String to, Double amount){
 
+        var currenciesByCodes = exchangeRateDao.getCurrenciesByCodes(from, to);
+        ValidationResult validationResult = readExchangeRateValidator.isValid(currenciesByCodes);
+        if (!validationResult.isValid()){
+            throw new  ValidationException(validationResult.getErrors());
+        }
+
+        var fromCurrency = currenciesByCodes.stream().filter(currencyEntity -> currencyEntity.getCode().equals(from)).findFirst().get();
+        var toCurrency = currenciesByCodes.stream().filter(currencyEntity -> currencyEntity.getCode().equals(to)).findFirst().get();
+        BigDecimal rate;
+
+        //Получение прямого курса
+        var exchangeRate = exchangeRateDao.findByCodesCurrencies(from, to);
+        var exchangeRateRevers = exchangeRateDao.findByCodesCurrencies(to, from);
+        var crossCource = exchangeRateDao.getCrossCource(from, to);
+
+        if (exchangeRate.isPresent()){
+            var ex= exchangeRate.get();
+            rate = exchangeRate.get().getRate();
+        }
+        //Получение Обратного курса
+
+       else if (exchangeRateRevers.isPresent()){
+            var exReverce = exchangeRateRevers.get();
+            rate = getReverseRate(exReverce.getRate());
+        }
+        //Получение кросс курса
+       else if (crossCource.isPresent()){
+           rate = crossCource.get();
+        }
+       else {
+            throw new ValidationException(List.of(Error.of(409,"Курс не найден")));
+        }
+       return   CourceDto.builder()
+               .fromCurrencyName(fromCurrency.getFullName())
+               .fromCurrencyCode(fromCurrency.getCode())
+               .toCurrencyName(toCurrency.getFullName())
+               .toCurrencyCode(toCurrency.getCode())
+               .amount(amount)
+               .rate(rate)
+               .result(amount * rate.doubleValue())
+               .build();
     }
 
     @SneakyThrows

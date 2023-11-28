@@ -41,11 +41,11 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
                                                 select id,code,fullName,sign from currencies
                                                 where sign = ?
                                                  """;
-    private final String DELETE__CURRENCY_BY_ID_SQL = """
+    private final String DELETE_CURRENCY_BY_ID_SQL = """
                                                 delete from currencies
                                                 where id = ?
                                                  """;
-    private final String DELETE__CURRENCY_BY_CODE_SQL = """
+    private final String DELETE_CURRENCY_BY_CODE_SQL = """
                                                 delete from currencies
                                                 where code = ?
                                                  """;
@@ -157,7 +157,7 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
     @Override
     public boolean delete(Integer id) {
         try (Connection connection = JDBCUtil.getConnection();
-           PreparedStatement preparedStatement = connection.prepareStatement(DELETE__CURRENCY_BY_ID_SQL)) {
+           PreparedStatement preparedStatement = connection.prepareStatement(DELETE_CURRENCY_BY_ID_SQL)) {
            preparedStatement.setInt(1,id);
            return preparedStatement.executeUpdate() > 0;
         }
@@ -166,7 +166,7 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
     @SneakyThrows
     public boolean deleteByCode(String code) {
         try (Connection connection = JDBCUtil.getConnection();
-           PreparedStatement preparedStatement = connection.prepareStatement(DELETE__CURRENCY_BY_CODE_SQL)) {
+           PreparedStatement preparedStatement = connection.prepareStatement(DELETE_CURRENCY_BY_CODE_SQL)) {
            preparedStatement.setString(1,code);
            return preparedStatement.executeUpdate() > 0;
         }

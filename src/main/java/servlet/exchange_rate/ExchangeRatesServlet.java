@@ -47,8 +47,7 @@ public class ExchangeRatesServlet extends HttpServlet {
            }catch (ValidationException validationException){
                req.setAttribute("errors", validationException.getErrors());
                doGet(req, resp);
-           }
-            catch (Exception e){
+           }catch (Exception e){
             resp.sendError(500, "Ошибка со стороны сервера");
         }
 
