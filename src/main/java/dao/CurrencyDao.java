@@ -3,7 +3,6 @@ package dao;
 import entity.CurrencyEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
 import util.JDBCUtil;
 
 import java.sql.Connection;
@@ -33,27 +32,14 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
                                                 select id,code,fullName,sign from currencies
                                                 where code = ?
                                                  """;
-    private final String FIND_BY_NAME_CURRENCY_SQL = """
-                                                select id,code,fullName,sign from currencies
-                                                where fullName = ?
-                                                 """;
-    private final String FIND_BY_SIGN_CURRENCY_SQL = """
-                                                select id,code,fullName,sign from currencies
-                                                where sign = ?
-                                                 """;
     private final String DELETE_CURRENCY_BY_ID_SQL = """
                                                 delete from currencies
                                                 where id = ?
-                                                 """;
-    private final String DELETE_CURRENCY_BY_CODE_SQL = """
-                                                delete from currencies
-                                                where code = ?
                                                  """;
     private final String UPDATE_CURRENCY_BY_ID_SQL = """
                                                 update currencies set code = ?, fullName = ?, sign = ? 
                                                 where code = ?
                                                  """;
-
     @Override
     public CurrencyEntity save(CurrencyEntity entity) throws SQLException {
         try (Connection connection = JDBCUtil.getConnection();
@@ -78,9 +64,9 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
             return currencyEntities;
         }
     }
-    @SneakyThrows
+
     @Override
-    public Optional<CurrencyEntity> findById(Integer id) {
+    public Optional<CurrencyEntity> findById(Integer id) throws SQLException {
         CurrencyEntity currency = null;
         try (Connection connection = JDBCUtil.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_ID_CURRENCY_SQL)) {
@@ -92,7 +78,6 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
             return Optional.ofNullable(currency);
         }
     }
-
     public Optional<CurrencyEntity> findByCode(String code) throws SQLException {
         CurrencyEntity currency = null;
         try (Connection connection = JDBCUtil.getConnection();
@@ -105,35 +90,8 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
             return Optional.ofNullable(currency);
         }
     }
-    @SneakyThrows
-    public Optional<CurrencyEntity> findByName(String name) {
-        CurrencyEntity currency = null;
-        try (Connection connection = JDBCUtil.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_NAME_CURRENCY_SQL)) {
-            preparedStatement.setString(1,name);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()){
-                currency = currencyBuild(resultSet);
-            }
-            return Optional.ofNullable(currency);
-        }
-    }
-    @SneakyThrows
-    public Optional<CurrencyEntity> findBySign(String sign) {
-        CurrencyEntity currency = null;
-        try (Connection connection = JDBCUtil.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_SIGN_CURRENCY_SQL)) {
-            preparedStatement.setString(1,sign);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            if (resultSet.next()){
-                currency = currencyBuild(resultSet);
-            }
-            return Optional.ofNullable(currency);
-        }
-    }
-    @SneakyThrows
     @Override
-    public CurrencyEntity update(CurrencyEntity entity) {
+    public CurrencyEntity update(CurrencyEntity entity) throws SQLException {
         try (Connection connection = JDBCUtil.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_CURRENCY_BY_ID_SQL)) {
             preparedStatement.setString(1,entity.getCode());
@@ -144,23 +102,15 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
             return entity;
         }
     }
-    @SneakyThrows
-    @Override
-    public boolean delete(Integer id) {
+     @Override
+    public boolean delete(Integer id) throws SQLException {
         try (Connection connection = JDBCUtil.getConnection();
            PreparedStatement preparedStatement = connection.prepareStatement(DELETE_CURRENCY_BY_ID_SQL)) {
            preparedStatement.setInt(1,id);
            return preparedStatement.executeUpdate() > 0;
         }
     }
-    @SneakyThrows
-    public boolean deleteByCode(String code) {
-        try (Connection connection = JDBCUtil.getConnection();
-           PreparedStatement preparedStatement = connection.prepareStatement(DELETE_CURRENCY_BY_CODE_SQL)) {
-           preparedStatement.setString(1,code);
-           return preparedStatement.executeUpdate() > 0;
-        }
-    }
+
     private static CurrencyEntity currencyBuild(ResultSet resultSet) throws SQLException {
        return CurrencyEntity.builder()
                 .id(resultSet.getInt("id"))
