@@ -1,6 +1,6 @@
 package servlet.exchange_rate;
 
-import dto.CreateExchangeRateDto;
+import dto.exchangeRate.CreateExchangeRateDto;
 import exception.ValidationException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

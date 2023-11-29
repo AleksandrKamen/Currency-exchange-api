@@ -1,6 +1,6 @@
 package mapper.exchange_rate_mapper;
 
-import dto.ReadExchangeRateDto;
+import dto.exchangeRate.ReadExchangeRateDto;
 import entity.ExchangeRateEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

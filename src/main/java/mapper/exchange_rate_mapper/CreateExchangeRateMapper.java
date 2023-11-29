@@ -1,7 +1,7 @@
 package mapper.exchange_rate_mapper;
 
 import dao.ExchangeRateDao;
-import dto.CreateExchangeRateDto;
+import dto.exchangeRate.CreateExchangeRateDto;
 import entity.ExchangeRateEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package dto;
+package dto.exchangeRate;
 
 import lombok.Builder;
 import lombok.Value;

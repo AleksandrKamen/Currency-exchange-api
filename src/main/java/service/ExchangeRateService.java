@@ -2,8 +2,8 @@ package service;
 
 import dao.ExchangeRateDao;
 import dto.CourceDto;
-import dto.CreateExchangeRateDto;
-import dto.ReadExchangeRateDto;
+import dto.exchangeRate.CreateExchangeRateDto;
+import dto.exchangeRate.ReadExchangeRateDto;
 import entity.ExchangeRateEntity;
 import exception.ValidationException;
 import lombok.AccessLevel;

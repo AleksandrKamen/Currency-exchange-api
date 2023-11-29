@@ -1,16 +1,18 @@
 package service;
 
 import dao.CurrencyDao;
-import dto.CurrencyDto;
+import dto.currency.CreateCurrencyDto;
+import dto.currency.ReadCurrencyDto;
 import exception.ValidationException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
 import mapper.currency_mapper.CreateCurrencyMapper;
 import mapper.currency_mapper.ReadCurrencyMapper;
 import validator.ValidationResult;
 import validator.currency.CreateCurrencyValidator;
 import validator.currency.ReadCurrencyValidator;
+
+import java.sql.SQLException;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CurrencyService {
@@ -21,12 +23,12 @@ public class CurrencyService {
     private final CreateCurrencyValidator createCurrencyValidator = CreateCurrencyValidator.getInstance();
     private final ReadCurrencyValidator readCurrencyValidator = ReadCurrencyValidator.getInstance();
 
-    public Object[] readAllCurrencies() {
+    public Object[] readAllCurrencies() throws SQLException {
         var allCurrencies = currencyDao.findAll();
         return allCurrencies.stream()
                 .map(readCurrencyMapper::mapFrom).toArray();
     }
-    public CurrencyDto readCurrencyByCode(String code) {
+    public ReadCurrencyDto readCurrencyByCode(String code) throws SQLException {
         ValidationResult validationResult = readCurrencyValidator.isValid(code);
 
         if (!validationResult.isValid()) {
@@ -35,8 +37,8 @@ public class CurrencyService {
         return currencyDao.findByCode(code)
                 .map(readCurrencyMapper::mapFrom).get();
     }
-    @SneakyThrows
-    public CurrencyDto create(CurrencyDto currencyDto) {
+
+    public CreateCurrencyDto create(CreateCurrencyDto currencyDto) throws SQLException {
         var validationResult = createCurrencyValidator.isValid(currencyDto);
 
         if (!validationResult.isValid()) {

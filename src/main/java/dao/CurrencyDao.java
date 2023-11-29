@@ -53,9 +53,9 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
                                                 update currencies set code = ?, fullName = ?, sign = ? 
                                                 where code = ?
                                                  """;
-    @SneakyThrows
+
     @Override
-    public CurrencyEntity save(CurrencyEntity entity) {
+    public CurrencyEntity save(CurrencyEntity entity) throws SQLException {
         try (Connection connection = JDBCUtil.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_CURRENCY_SQL)) {
             preparedStatement.setString(1,entity.getCode());
@@ -65,9 +65,9 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
             return entity;
         }
     }
-    @SneakyThrows
+
     @Override
-    public List<CurrencyEntity> findAll() {
+    public List<CurrencyEntity> findAll() throws SQLException {
         ArrayList<CurrencyEntity> currencyEntities = new ArrayList<>();
         try (Connection connection = JDBCUtil.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_CURRENCIES_SQL)) {
