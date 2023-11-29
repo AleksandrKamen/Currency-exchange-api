@@ -8,29 +8,35 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.CurrencyService;
-import util.JSPUtil;
 import validator.Error;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
-import static jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+import static jakarta.servlet.http.HttpServletResponse.*;
 
-@WebServlet("/currency")
+@WebServlet("/currency/*")
 public class CurrencyServlet extends HttpServlet {
     private static final CurrencyService currencyService  = CurrencyService.getInstance();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        var code = req.getParameter("code");
-        try {
-                req.setAttribute("currency", currencyService.readCurrencyByCode(code));
-                req.getRequestDispatcher(JSPUtil.getPath("currency")).forward(req, resp);
-        } catch (ValidationException validationException){
-            req.setAttribute("errors", validationException.getErrors());
-            req.getRequestDispatcher(JSPUtil.getPath("currency")).forward(req, resp);
+        var code = req.getPathInfo().replaceAll("/","").toUpperCase();
 
-        } catch (Exception e){
+        try {
+            var currency = currencyService.readCurrencyByCode(code);
+            if (!currency.isPresent()){
+                resp.setStatus(SC_NOT_FOUND);
+                objectMapper.writeValue(resp.getWriter(), Error.of(SC_NOT_FOUND,"Валюта с данным кодом не найдена"));
+            }else {
+                objectMapper.writeValue(resp.getWriter(), currency.get());
+            }
+        } catch (ValidationException validationException){
+            resp.setStatus(SC_BAD_REQUEST);
+            objectMapper.writeValue(resp.getWriter(), validationException.getErrors());
+        }catch (SQLException sqlException){
+            resp.setStatus(SC_INTERNAL_SERVER_ERROR);
             objectMapper.writeValue(resp.getWriter(), Error.of(SC_INTERNAL_SERVER_ERROR, "Ошибка сервера"));
         }
     }

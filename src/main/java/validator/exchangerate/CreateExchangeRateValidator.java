@@ -18,9 +18,9 @@ public class CreateExchangeRateValidator implements Validator<CreateExchangeRate
     public ValidationResult isValid(CreateExchangeRateDto object)  {
         ValidationResult validationResult = new ValidationResult();
 
-        if (!currencyDao.findByCode(object.getBaseCurrencyCode()).isPresent() || !currencyDao.findByCode(object.getTargetCurrencyCode()).isPresent()){
-            validationResult.add(Error.of(409,"Указанные валюты отсутствуют в базе данных"));
-        }
+//        if (!currencyDao.findByCode(object.getBaseCurrencyCode()).isPresent() || !currencyDao.findByCode(object.getTargetCurrencyCode()).isPresent()){
+//            validationResult.add(Error.of(409,"Указанные валюты отсутствуют в базе данных"));
+//        }
         if (object.getBaseCurrencyCode().equals(object.getTargetCurrencyCode())){
             validationResult.add(Error.of(409,"Дублирование валюты"));
         }

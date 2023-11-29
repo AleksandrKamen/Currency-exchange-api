@@ -13,6 +13,7 @@ import validator.currency.CreateCurrencyValidator;
 import validator.currency.ReadCurrencyValidator;
 
 import java.sql.SQLException;
+import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CurrencyService {
@@ -28,16 +29,15 @@ public class CurrencyService {
         return allCurrencies.stream()
                 .map(readCurrencyMapper::mapFrom).toArray();
     }
-    public ReadCurrencyDto readCurrencyByCode(String code) throws SQLException {
+    public Optional<ReadCurrencyDto> readCurrencyByCode(String code) throws SQLException {
         ValidationResult validationResult = readCurrencyValidator.isValid(code);
 
         if (!validationResult.isValid()) {
             throw new ValidationException(validationResult.getErrors());
         }
         return currencyDao.findByCode(code)
-                .map(readCurrencyMapper::mapFrom).get();
+                .map(readCurrencyMapper::mapFrom);
     }
-
     public CreateCurrencyDto create(CreateCurrencyDto currencyDto) throws SQLException {
         var validationResult = createCurrencyValidator.isValid(currencyDto);
 

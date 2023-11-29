@@ -92,8 +92,8 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
             return Optional.ofNullable(currency);
         }
     }
-    @SneakyThrows
-    public Optional<CurrencyEntity> findByCode(String code) {
+
+    public Optional<CurrencyEntity> findByCode(String code) throws SQLException {
         CurrencyEntity currency = null;
         try (Connection connection = JDBCUtil.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(FIND_BY_CODE_CURRENCY_SQL)) {
