@@ -7,6 +7,8 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import mapper.Mapper;
 
+import java.sql.SQLException;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CreateExchangeRateMapper implements Mapper<CreateExchangeRateDto, ExchangeRateEntity> {
    private static final CreateExchangeRateMapper INSTANCE = new CreateExchangeRateMapper();

@@ -31,7 +31,7 @@ public class CreateExchangeRateValidator implements Validator<CreateExchangeRate
         return validationResult;
     }
 
-    public ValidationResult isValidPostRequest (String baseCurrencyCode, String targetCurrencycode, String rate){
+    public ValidationResult isValidRequest(String baseCurrencyCode, String targetCurrencycode, String rate){
         ValidationResult validationResult = new ValidationResult();
         if (baseCurrencyCode == null || baseCurrencyCode.isEmpty()){
             validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр baseCurrencyCode отсутствует"));

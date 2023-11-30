@@ -5,10 +5,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import util.JDBCUtil;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +16,7 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
 
     private final String SAVE_CURRENCY_SQL = """
                                              insert into currencies (code, fullName, sign) 
-                                             VALUES (?,?,?) 
+                                             VALUES (?,?,?) returning id
                                              """;
     private final String FIND_ALL_CURRENCIES_SQL = """
                                                 select id,code,fullName,sign from currencies
@@ -47,7 +44,10 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
             preparedStatement.setString(1,entity.getCode());
             preparedStatement.setString(2,entity.getFullName());
             preparedStatement.setString(3,entity.getSign());
-            preparedStatement.executeUpdate();
+            var resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()){
+                entity.setId(resultSet.getInt(1));
+            }
             return entity;
         }
     }

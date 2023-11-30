@@ -1,6 +1,5 @@
 package validator.exchangerate;
 
-import dao.CurrencyDao;
 import entity.CurrencyEntity;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -8,7 +7,6 @@ import validator.Error;
 import validator.ValidationResult;
 import validator.Validator;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
@@ -17,7 +15,6 @@ import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReadExchangeRateValidator implements Validator<List<CurrencyEntity>> {
     private static final ReadExchangeRateValidator INSTANCE = new ReadExchangeRateValidator();
-    private final CurrencyDao currencyDao = CurrencyDao.getInstance();
 
     @Override
     public ValidationResult isValid(List<CurrencyEntity> list) {

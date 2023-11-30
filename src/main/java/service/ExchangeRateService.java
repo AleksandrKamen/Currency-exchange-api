@@ -1,22 +1,26 @@
 package service;
 
+import dao.CurrencyDao;
 import dao.ExchangeRateDao;
-import dto.CourceDto;
+import dto.ExchangeDto;
 import dto.exchangeRate.CreateExchangeRateDto;
 import dto.exchangeRate.ReadExchangeRateDto;
+import entity.CurrencyEntity;
 import entity.ExchangeRateEntity;
 import exception.ValidationException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
 import mapper.exchange_rate_mapper.CreateExchangeRateMapper;
 import mapper.exchange_rate_mapper.ReadExchangeRateMapper;
+
 import validator.Error;
+import validator.ExchangeValidator;
 import validator.ValidationResult;
 import validator.exchangerate.CreateExchangeRateValidator;
 import validator.exchangerate.ReadExchangeRateValidator;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -31,119 +35,112 @@ public class ExchangeRateService {
     private final ReadExchangeRateMapper readExchangeRateMapper = ReadExchangeRateMapper.getInstance();
     private final CreateExchangeRateValidator createExchangeRateValidator = CreateExchangeRateValidator.getInstance();
     private final ReadExchangeRateValidator readExchangeRateValidator = ReadExchangeRateValidator.getInstance();
+    private final ExchangeValidator exchangeValidator = ExchangeValidator.getInstance();
 
     public Object[] findAllExchangeRates() throws SQLException {
-       return exchangeRateDao.findAll()
-                                .stream()
-                                   .map(readExchangeRateMapper::mapFrom)
-                                      .toArray();
+        return exchangeRateDao.findAll()
+                .stream()
+                .map(readExchangeRateMapper::mapFrom)
+                .toArray();
     }
-    public ReadExchangeRateDto findExchangeRate(String baseCode, String targetCode){
+
+    public ReadExchangeRateDto findExchangeRate(String baseCode, String targetCode) {
 
         var currenciesByCodes = exchangeRateDao.getCurrenciesByCodes(baseCode, targetCode);
         ValidationResult validationResult = readExchangeRateValidator.isValid(currenciesByCodes);
-        if (!validationResult.isValid()){
-             throw new  ValidationException(validationResult.getErrors());
+        if (!validationResult.isValid()) {
+            throw new ValidationException(validationResult.getErrors());
         }
         var exchangeRate = exchangeRateDao.findByCodesCurrencies(baseCode, targetCode);
-        if (!exchangeRate.isPresent()){
-            throw new  ValidationException(List.of(Error.of(SC_NOT_FOUND, "Курс не найден")));
+        if (!exchangeRate.isPresent()) {
+            throw new ValidationException(List.of(Error.of(SC_NOT_FOUND, "Курс не найден")));
         }
-
         return readExchangeRateMapper.mapFrom(exchangeRate.get());
     }
 
-    public CourceDto makeExchange(String from, String to, Double amount){
+    public ExchangeDto makeExchange(String from, String to, String amount) throws SQLException {
 
-        var currenciesByCodes = exchangeRateDao.getCurrenciesByCodes(from, to);
-        ValidationResult validationResult = readExchangeRateValidator.isValid(currenciesByCodes);
-        if (!validationResult.isValid()){
-            throw new  ValidationException(validationResult.getErrors());
+        var validationResult = exchangeValidator.isValid(from, to, amount);
+        if (!validationResult.isValid()) {
+            throw new ValidationException(validationResult.getErrors());
         }
-
-        var fromCurrency = currenciesByCodes.stream().filter(currencyEntity -> currencyEntity.getCode().equals(from)).findFirst().get();
-        var toCurrency = currenciesByCodes.stream().filter(currencyEntity -> currencyEntity.getCode().equals(to)).findFirst().get();
-        BigDecimal rate;
+        CurrencyEntity baseCurrency = null;
+        CurrencyEntity targetCurrency = null;
+        BigDecimal rate = null;
 
         var exchangeRate = exchangeRateDao.findByCodesCurrencies(from, to);
         var exchangeRateRevers = exchangeRateDao.findByCodesCurrencies(to, from);
         var crossCource = exchangeRateDao.getCrossCource(from, to);
 
-        if (exchangeRate.isPresent()){
-            var ex= exchangeRate.get();
+        if (exchangeRate.isPresent()) {
+            baseCurrency = exchangeRate.get().getBaseCurrency();
+            targetCurrency = exchangeRate.get().getTargetCurrency();
             rate = exchangeRate.get().getRate();
+        } else if (exchangeRateRevers.isPresent()) {
+            baseCurrency = exchangeRateRevers.get().getTargetCurrency();
+            targetCurrency = exchangeRateRevers.get().getBaseCurrency();
+            rate = getReverseRate(exchangeRateRevers.get().getRate());
+        } else if (crossCource.isPresent()) {
+            var currencies = exchangeRateDao.getCurrenciesByCodes(from, to);
+            baseCurrency = currencies.stream().filter(currencyEntity -> currencyEntity.getCode().equals(from)).findFirst().get();
+            targetCurrency = currencies.stream().filter(currencyEntity -> currencyEntity.getCode().equals(to)).findFirst().get();
+            rate = crossCource.get();
         }
 
-       else if (exchangeRateRevers.isPresent()){
-            var exReverce = exchangeRateRevers.get();
-            rate = getReverseRate(exReverce.getRate());
-        }
-       else if (crossCource.isPresent()){
-           rate = crossCource.get();
-        }
-       else {
-            throw new ValidationException(List.of(Error.of(409,"Курс не найден")));
-        }
-       return   CourceDto.builder()
-               .fromCurrencyName(fromCurrency.getFullName())
-               .fromCurrencyCode(fromCurrency.getCode())
-               .toCurrencyName(toCurrency.getFullName())
-               .toCurrencyCode(toCurrency.getCode())
-               .amount(amount)
-               .rate(rate)
-               .result(amount * rate.doubleValue())
-               .build();
+        return ExchangeDto.builder()
+                .baseCurrency(baseCurrency)
+                .targetCurrency(targetCurrency)
+                .amount(new BigDecimal(amount))
+                .rate(rate.setScale(2, RoundingMode.UP))
+                .result((new BigDecimal(amount).multiply(rate)).setScale(2, RoundingMode.UP))
+                .build();
     }
 
-    public CreateExchangeRateDto createExchangeRate(CreateExchangeRateDto exchangeRateDto) throws SQLException {
+    public ReadExchangeRateDto createExchangeRate(CreateExchangeRateDto exchangeRateDto) throws SQLException {
         ValidationResult validationResult = createExchangeRateValidator.isValid(exchangeRateDto);
 
-        if (!validationResult.isValid()){
+        if (!validationResult.isValid()) {
             throw new ValidationException(validationResult.getErrors());
         }
         ExchangeRateEntity exchangeRateEntity = createExchangeRateMapper.mapFrom(exchangeRateDto);
-        exchangeRateDao.save(exchangeRateEntity);
-        return exchangeRateDto;
+        var saveEntity = exchangeRateDao.save(exchangeRateEntity);
+
+        return readExchangeRateMapper.mapFrom(saveEntity);
     }
 
-    @SneakyThrows
-    public CreateExchangeRateDto updateExchangeRate(CreateExchangeRateDto createExchangeRateDto){
-        String baseCode = createExchangeRateDto.getBaseCurrencyCode(), targetCode = createExchangeRateDto.getTargetCurrencyCode();
+    public ReadExchangeRateDto updateExchangeRate(CreateExchangeRateDto createExchangeRateDto) throws SQLException {
 
-        if (exchangeRateDao.findByCodesCurrencies(createExchangeRateDto.getBaseCurrencyCode(), createExchangeRateDto
-                .getTargetCurrencyCode()).isPresent()) {
-            var exchangeRateEntity = exchangeRateDao.findByCodesCurrencies(baseCode, targetCode).get();
-            exchangeRateEntity.setRate(createExchangeRateDto.getRate());
-            exchangeRateDao.update(exchangeRateEntity);
-        } else {
-            var exchangeRateEntity = exchangeRateDao.findByCodesCurrencies(targetCode, baseCode).get();
-            exchangeRateEntity.setRate(getReverseRate(createExchangeRateDto.getRate()));
-             exchangeRateDao.update(exchangeRateEntity);
+        var validationResult = createExchangeRateValidator.isValid(createExchangeRateDto);
+        if (!validationResult.isValid()) {
+            throw new ValidationException(validationResult.getErrors());
         }
-        return createExchangeRateDto;
+        if (!exchangeRateDao.findByCodesCurrencies(createExchangeRateDto.getBaseCurrencyCode(), createExchangeRateDto.getTargetCurrencyCode()).isPresent()) {
+            throw new ValidationException(List.of(Error.of(SC_NOT_FOUND, "Курс не найден")));
+        }
+        var exchangeRate = createExchangeRateMapper.mapFrom(createExchangeRateDto);
+        var updateExchangeRate = exchangeRateDao.update(exchangeRate);
+        var readExchangeRateDto = readExchangeRateMapper.mapFrom(updateExchangeRate);
+
+        return readExchangeRateDto;
     }
 
-    public boolean isNew(CreateExchangeRateDto exchangeRateDto){
-        return exchangeRateDao.findByCodesCurrencies(exchangeRateDto.getBaseCurrencyCode(), exchangeRateDto.getTargetCurrencyCode())
-                .isPresent()
-            || exchangeRateDao.findByCodesCurrencies(exchangeRateDto.getTargetCurrencyCode(), exchangeRateDto.getBaseCurrencyCode())
-                .isPresent();
-    }
-    public void isValidRequest(String baseCurrencyCode, String targetCurrencycode, String rate){
-        var validPostRequest = createExchangeRateValidator.isValidPostRequest(baseCurrencyCode, targetCurrencycode, rate);
-        if (!validPostRequest.isValid()){
+    public void isValidRequest(String baseCurrencyCode, String targetCurrencycode, String rate) {
+        var validPostRequest = createExchangeRateValidator.isValidRequest(baseCurrencyCode, targetCurrencycode, rate);
+        if (!validPostRequest.isValid()) {
             throw new ValidationException(validPostRequest.getErrors());
         }
     }
-    public void isValidRequest(String сurrencyСodes)  {
+
+    public void isValidRequest(String сurrencyСodes) {
         var validGetRequest = readExchangeRateValidator.isValidCurrenciesCodes(сurrencyСodes);
-        if (!validGetRequest.isValid()){
+        if (!validGetRequest.isValid()) {
             throw new ValidationException(validGetRequest.getErrors());
         }
     }
 
-    public BigDecimal getReverseRate(BigDecimal rate){
-        return BigDecimal.valueOf(1/rate.doubleValue()).setScale(6,BigDecimal.ROUND_HALF_UP);
+    public BigDecimal getReverseRate(BigDecimal rate) {
+        return BigDecimal.valueOf(1 / rate.doubleValue()).setScale(6, BigDecimal.ROUND_HALF_UP);
     }
-    public static ExchangeRateService getInstance(){return INSTANCE;}
+
+    public static ExchangeRateService getInstance() {return INSTANCE;}
 }

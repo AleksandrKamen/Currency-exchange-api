@@ -3,6 +3,7 @@ package service;
 import dao.CurrencyDao;
 import dto.currency.CreateCurrencyDto;
 import dto.currency.ReadCurrencyDto;
+import entity.CurrencyEntity;
 import exception.ValidationException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -38,15 +39,17 @@ public class CurrencyService {
         return currencyDao.findByCode(code)
                 .map(readCurrencyMapper::mapFrom);
     }
-    public CreateCurrencyDto create(CreateCurrencyDto currencyDto) throws SQLException {
+    public ReadCurrencyDto create(CreateCurrencyDto currencyDto) throws SQLException {
         var validationResult = createCurrencyValidator.isValid(currencyDto);
 
         if (!validationResult.isValid()) {
             throw new ValidationException(validationResult.getErrors());
         }
         var currency = createCurrencyMapper.mapFrom(currencyDto);
-        currencyDao.save(currency);
-        return currencyDto;
+        var saveCurrency = currencyDao.save(currency);
+        var readCurrencyDto = readCurrencyMapper.mapFrom(saveCurrency);
+
+        return readCurrencyDto;
     }
     public static CurrencyService getInstance() {
         return INSTANCE;
