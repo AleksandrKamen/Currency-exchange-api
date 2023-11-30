@@ -113,21 +113,21 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
             return Optional.ofNullable(resultSet.getBigDecimal("cource"));
         }
     }
-    @SneakyThrows
+
     @Override
-    public ExchangeRateEntity save(ExchangeRateEntity entity) {
+    public ExchangeRateEntity save(ExchangeRateEntity entity) throws SQLException {
         try (Connection connection = JDBCUtil.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(SAVE_EXCHANGERATE_SQL)) {
-            preparedStatement.setInt(1,entity.getBaseCurrencyId().getId());
-            preparedStatement.setInt(2,entity.getTargetCurrencyId().getId());
+            preparedStatement.setInt(1,entity.getBaseCurrency().getId());
+            preparedStatement.setInt(2,entity.getTargetCurrency().getId());
             preparedStatement.setBigDecimal(3,entity.getRate());
             preparedStatement.executeUpdate();
             return entity;
         }
     }
-    @SneakyThrows
+
     @Override
-    public List<ExchangeRateEntity> findAll() {
+    public List<ExchangeRateEntity> findAll() throws SQLException {
         ArrayList<ExchangeRateEntity> exchangeRateEntities = new ArrayList<>();
         try (Connection connection = JDBCUtil.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(FIND_ALL_EXCHANGERATES_SQL)) {
@@ -172,8 +172,8 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
         try (Connection connection = JDBCUtil.getConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_EXCHANGERATE_BY_ID_SQL)) {
             preparedStatement.setBigDecimal(1,entity.getRate());
-            preparedStatement.setInt(2,entity.getBaseCurrencyId().getId());
-            preparedStatement.setInt(3, entity.getTargetCurrencyId().getId());
+            preparedStatement.setInt(2,entity.getBaseCurrency().getId());
+            preparedStatement.setInt(3, entity.getTargetCurrency().getId());
             preparedStatement.executeUpdate();
             return entity;
         }
@@ -224,8 +224,8 @@ public class ExchangeRateDao implements Dao<Integer, ExchangeRateEntity> {
 
         return ExchangeRateEntity.builder()
                 .id(resultSet.getInt("id"))
-                .baseCurrencyId(baseCurrency)
-                .targetCurrencyId(targetCurrency)
+                .baseCurrency(baseCurrency)
+                .targetCurrency(targetCurrency)
                 .rate(resultSet.getBigDecimal("rate"))
                 .build();
     }

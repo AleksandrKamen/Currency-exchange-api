@@ -1,5 +1,6 @@
 package dto.exchangeRate;
 
+import entity.CurrencyEntity;
 import lombok.Builder;
 import lombok.Value;
 
@@ -9,9 +10,9 @@ import java.math.BigDecimal;
 @Builder
 public class ReadExchangeRateDto {
     private Integer id;
-    private String baseCurrencyName;
-    private String targetCurrencyName;
-    private String baseCurrencyCode;
-    private String targetCurrencyCode;
+
+    private CurrencyEntity baseCurrency;
+    private CurrencyEntity targetCurrency;
+
     private BigDecimal rate;
 }

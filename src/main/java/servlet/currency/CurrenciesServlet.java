@@ -55,7 +55,7 @@ public class CurrenciesServlet extends HttpServlet {
                ));
         }
         catch (Exception e){
-            e.getMessage();
+            resp.setStatus(SC_INTERNAL_SERVER_ERROR);
             objectMapper.writeValue(resp.getWriter(), Error.of(SC_INTERNAL_SERVER_ERROR, "Ошибка сервера"));
         }
     }

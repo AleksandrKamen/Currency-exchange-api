@@ -18,7 +18,7 @@ public class ReadCurrencyValidator implements Validator<String> {
         if (code.equals("")){
             validationResult.add(Error.of(SC_BAD_REQUEST, "Код валюты отсутствует в адресе"));
         }else if(!code.matches("[a-zA-Z]{3}")){
-            validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр code должен соответствовать стандарту ISO 4217"));
+            validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр code не соответствует стандарту ISO 4217"));
         }
         return validationResult;
     }

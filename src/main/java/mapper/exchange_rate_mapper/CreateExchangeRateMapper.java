@@ -25,8 +25,8 @@ public class CreateExchangeRateMapper implements Mapper<CreateExchangeRateDto, E
                 .findFirst().get();
 
         return ExchangeRateEntity.builder()
-                .baseCurrencyId(baseCurrency)
-                .targetCurrencyId(targetCurrency)
+                .baseCurrency(baseCurrency)
+                .targetCurrency(targetCurrency)
                 .rate(object.getRate())
                 .build();
     }

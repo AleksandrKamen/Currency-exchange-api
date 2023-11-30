@@ -16,19 +16,19 @@ public class CreateCurrencyValidator implements Validator<CreateCurrencyDto> {
     public ValidationResult isValid(CreateCurrencyDto object) {
       ValidationResult validationResult = new ValidationResult();
 
-      if (object.getName() == null){
+      if (object.getName() == null || object.getName().isEmpty()){
           validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр name отсутствует"));
       } else if (!object.getName().matches("[a-zA-Z ]*")){
           validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр name содержит недопустимые символы"));
       }
 
-      if (object.getCode() == null){
+      if (object.getCode() == null || object.getCode().isEmpty()){
           validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр code отсутствует"));
       } else if (!object.getCode().matches("[a-zA-Z]{3}")){
           validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр code должен соответствовать стандарту ISO 4217"));
       }
 
-      if (object.getSign() == null){
+      if (object.getSign() == null || object.getSign().isEmpty()){
           validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр sign отсутствует"));
       } else if(!object.getSign().matches("[^\\d\s]{1,3}")){
           validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр sign содержит недопустимые символы или значение более 3 символов)"));

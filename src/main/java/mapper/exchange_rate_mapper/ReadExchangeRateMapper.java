@@ -14,10 +14,8 @@ public class ReadExchangeRateMapper implements Mapper<ExchangeRateEntity, ReadEx
     public ReadExchangeRateDto mapFrom(ExchangeRateEntity object) {
         return ReadExchangeRateDto.builder()
                 .id(object.getId())
-                .baseCurrencyName(object.getBaseCurrencyId().getFullName())
-                .targetCurrencyName(object.getTargetCurrencyId().getFullName())
-                .baseCurrencyCode(object.getBaseCurrencyId().getCode())
-                .targetCurrencyCode(object.getTargetCurrencyId().getCode())
+                .baseCurrency(object.getBaseCurrency())
+                .targetCurrency(object.getTargetCurrency())
                 .rate(object.getRate())
                 .build();
     }

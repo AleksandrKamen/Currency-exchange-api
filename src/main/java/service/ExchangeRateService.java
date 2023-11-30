@@ -17,7 +17,10 @@ import validator.exchangerate.CreateExchangeRateValidator;
 import validator.exchangerate.ReadExchangeRateValidator;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.List;
+
+import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExchangeRateService {
@@ -29,7 +32,7 @@ public class ExchangeRateService {
     private final CreateExchangeRateValidator createExchangeRateValidator = CreateExchangeRateValidator.getInstance();
     private final ReadExchangeRateValidator readExchangeRateValidator = ReadExchangeRateValidator.getInstance();
 
-    public Object[] findAllExchangeRates(){
+    public Object[] findAllExchangeRates() throws SQLException {
        return exchangeRateDao.findAll()
                                 .stream()
                                    .map(readExchangeRateMapper::mapFrom)
@@ -43,10 +46,11 @@ public class ExchangeRateService {
              throw new  ValidationException(validationResult.getErrors());
         }
         var exchangeRate = exchangeRateDao.findByCodesCurrencies(baseCode, targetCode);
-        var exchangeRateRevers = exchangeRateDao.findByCodesCurrencies(targetCode, baseCode);
+        if (!exchangeRate.isPresent()){
+            throw new  ValidationException(List.of(Error.of(SC_NOT_FOUND, "Курс не найден")));
+        }
 
-        return exchangeRate.isPresent()?readExchangeRateMapper.mapFrom(exchangeRate.get())
-                :readExchangeRateMapper.mapFrom(exchangeRateRevers.get());
+        return readExchangeRateMapper.mapFrom(exchangeRate.get());
     }
 
     public CourceDto makeExchange(String from, String to, Double amount){
@@ -91,8 +95,7 @@ public class ExchangeRateService {
                .build();
     }
 
-    @SneakyThrows
-    public CreateExchangeRateDto createExchangeRate(CreateExchangeRateDto exchangeRateDto){
+    public CreateExchangeRateDto createExchangeRate(CreateExchangeRateDto exchangeRateDto) throws SQLException {
         ValidationResult validationResult = createExchangeRateValidator.isValid(exchangeRateDto);
 
         if (!validationResult.isValid()){
@@ -125,6 +128,18 @@ public class ExchangeRateService {
                 .isPresent()
             || exchangeRateDao.findByCodesCurrencies(exchangeRateDto.getTargetCurrencyCode(), exchangeRateDto.getBaseCurrencyCode())
                 .isPresent();
+    }
+    public void isValidRequest(String baseCurrencyCode, String targetCurrencycode, String rate){
+        var validPostRequest = createExchangeRateValidator.isValidPostRequest(baseCurrencyCode, targetCurrencycode, rate);
+        if (!validPostRequest.isValid()){
+            throw new ValidationException(validPostRequest.getErrors());
+        }
+    }
+    public void isValidRequest(String сurrencyСodes)  {
+        var validGetRequest = readExchangeRateValidator.isValidCurrenciesCodes(сurrencyСodes);
+        if (!validGetRequest.isValid()){
+            throw new ValidationException(validGetRequest.getErrors());
+        }
     }
 
     public BigDecimal getReverseRate(BigDecimal rate){
