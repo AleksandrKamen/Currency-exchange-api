@@ -5,6 +5,7 @@ import dto.exchangeRate.CreateExchangeRateDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import validator.Error;
+import validator.ErrorMessage;
 import validator.ValidationResult;
 import validator.Validator;
 
@@ -23,10 +24,10 @@ public class CreateExchangeRateValidator implements Validator<CreateExchangeRate
         ValidationResult validationResult = new ValidationResult();
 
         if (!currencyDao.findByCode(object.getBaseCurrencyCode()).isPresent()){
-            validationResult.add(Error.of(SC_NOT_FOUND,"Первая указанная валюта отсутствует в базе данных"));
+            validationResult.add(Error.of(SC_NOT_FOUND,ErrorMessage.NOT_FOUND.formatted("первая валюта")));
         }
         if (!currencyDao.findByCode(object.getTargetCurrencyCode()).isPresent()){
-            validationResult.add(Error.of(SC_NOT_FOUND,"Вторая указанная валюта отсутствует в базе данных"));
+            validationResult.add(Error.of(SC_NOT_FOUND,ErrorMessage.NOT_FOUND.formatted("вторая валюта")));
         }
         return validationResult;
     }
@@ -34,24 +35,24 @@ public class CreateExchangeRateValidator implements Validator<CreateExchangeRate
     public ValidationResult isValidRequest(String baseCurrencyCode, String targetCurrencycode, String rate){
         ValidationResult validationResult = new ValidationResult();
         if (baseCurrencyCode == null || baseCurrencyCode.isEmpty()){
-            validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр baseCurrencyCode отсутствует"));
+            validationResult.add(Error.of(SC_BAD_REQUEST,ErrorMessage.MISSING_PARAMETER.formatted("baseCurrencyCode")));
         } else if (!baseCurrencyCode.matches("[a-zA-Z]{3}")){
-            validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр baseCurrencyCode должен соответствовать стандарту ISO 4217"));
+            validationResult.add(Error.of(SC_BAD_REQUEST, "baseCurrencyCode - " + ErrorMessage.INVALID_CODE));
         }
 
         if (targetCurrencycode == null || targetCurrencycode.isEmpty()){
-            validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр targetCurrencyCode отсутствует"));
+            validationResult.add(Error.of(SC_BAD_REQUEST,ErrorMessage.MISSING_PARAMETER.formatted("targetCurrencycode")));
         } else if (!targetCurrencycode.matches("[a-zA-Z]{3}")){
-            validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр targetCurrencyCode должен соответствовать стандарту ISO 4217"));
+            validationResult.add(Error.of(SC_BAD_REQUEST,"targetCurrencycode - " + ErrorMessage.INVALID_CODE));
         }
 
         if (rate == null || rate.isEmpty()){
-            validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр rate отсутствует"));
+            validationResult.add(Error.of(SC_BAD_REQUEST, ErrorMessage.MISSING_PARAMETER.formatted("rate")));
         } else {
             try {
                 BigDecimal.valueOf(Double.parseDouble(rate));
             } catch (NumberFormatException e) {
-                validationResult.add(Error.of(SC_BAD_REQUEST, "Параметр rate указан не корректно"));
+                validationResult.add(Error.of(SC_BAD_REQUEST, ErrorMessage.INVALID_PARAMETER.formatted("rate")));
             }
         }
         return validationResult;

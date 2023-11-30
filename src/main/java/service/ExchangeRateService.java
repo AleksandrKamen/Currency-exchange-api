@@ -1,6 +1,5 @@
 package service;
 
-import dao.CurrencyDao;
 import dao.ExchangeRateDao;
 import dto.ExchangeDto;
 import dto.exchangeRate.CreateExchangeRateDto;
@@ -14,7 +13,8 @@ import mapper.exchange_rate_mapper.CreateExchangeRateMapper;
 import mapper.exchange_rate_mapper.ReadExchangeRateMapper;
 
 import validator.Error;
-import validator.ExchangeValidator;
+import validator.ErrorMessage;
+import validator.exchangeValidator.ExchangeValidator;
 import validator.ValidationResult;
 import validator.exchangerate.CreateExchangeRateValidator;
 import validator.exchangerate.ReadExchangeRateValidator;
@@ -53,7 +53,7 @@ public class ExchangeRateService {
         }
         var exchangeRate = exchangeRateDao.findByCodesCurrencies(baseCode, targetCode);
         if (!exchangeRate.isPresent()) {
-            throw new ValidationException(List.of(Error.of(SC_NOT_FOUND, "Курс не найден")));
+            throw new ValidationException(List.of(Error.of(SC_NOT_FOUND, ErrorMessage.NOT_FOUND.formatted("курс"))));
         }
         return readExchangeRateMapper.mapFrom(exchangeRate.get());
     }
@@ -82,8 +82,10 @@ public class ExchangeRateService {
             rate = getReverseRate(exchangeRateRevers.get().getRate());
         } else if (crossCource.isPresent()) {
             var currencies = exchangeRateDao.getCurrenciesByCodes(from, to);
-            baseCurrency = currencies.stream().filter(currencyEntity -> currencyEntity.getCode().equals(from)).findFirst().get();
-            targetCurrency = currencies.stream().filter(currencyEntity -> currencyEntity.getCode().equals(to)).findFirst().get();
+            baseCurrency = currencies.stream().filter(currencyEntity -> currencyEntity.getCode().equals(from))
+                    .findFirst().get();
+            targetCurrency = currencies.stream().filter(currencyEntity -> currencyEntity.getCode().equals(to))
+                    .findFirst().get();
             rate = crossCource.get();
         }
 
@@ -115,7 +117,7 @@ public class ExchangeRateService {
             throw new ValidationException(validationResult.getErrors());
         }
         if (!exchangeRateDao.findByCodesCurrencies(createExchangeRateDto.getBaseCurrencyCode(), createExchangeRateDto.getTargetCurrencyCode()).isPresent()) {
-            throw new ValidationException(List.of(Error.of(SC_NOT_FOUND, "Курс не найден")));
+            throw new ValidationException(List.of(Error.of(SC_NOT_FOUND, ErrorMessage.NOT_FOUND.formatted("курс"))));
         }
         var exchangeRate = createExchangeRateMapper.mapFrom(createExchangeRateDto);
         var updateExchangeRate = exchangeRateDao.update(exchangeRate);

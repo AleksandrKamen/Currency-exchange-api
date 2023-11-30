@@ -1,10 +1,13 @@
-package validator;
+package validator.exchangeValidator;
 
 
 import dao.CurrencyDao;
 import dao.ExchangeRateDao;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import validator.Error;
+import validator.ErrorMessage;
+import validator.ValidationResult;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -22,33 +25,33 @@ public class ExchangeValidator {
         ValidationResult validationResult = new ValidationResult();
 
         if (from == null || from.equals("")){
-            validationResult.add(Error.of(SC_BAD_REQUEST, "Код валюты отсутствует в адресе"));
+            validationResult.add(Error.of(SC_BAD_REQUEST, ErrorMessage.MISSING_PARAMETER.formatted("код валюты")));
         }else if(!from.matches("[a-zA-Z]{3}")){
-            validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр code не соответствует стандарту ISO 4217"));
+            validationResult.add(Error.of(SC_BAD_REQUEST,ErrorMessage.INVALID_CODE));
         } else if (!currencyDao.findByCode(from).isPresent()){
-            validationResult.add(Error.of(SC_NOT_FOUND,"Первая указанная валюта отсутствует в базе данных"));
+            validationResult.add(Error.of(SC_NOT_FOUND,ErrorMessage.NOT_FOUND.formatted("первая указанная валюта")));
         }
 
         if (to == null || to.equals("")){
-            validationResult.add(Error.of(SC_BAD_REQUEST, "Код валюты отсутствует в адресе"));
+            validationResult.add(Error.of(SC_BAD_REQUEST, ErrorMessage.MISSING_PARAMETER.formatted("коды валют в адрессной строке")));
         }else if(!to.matches("[a-zA-Z]{3}")){
-            validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр code не соответствует стандарту ISO 4217"));
+            validationResult.add(Error.of(SC_BAD_REQUEST,ErrorMessage.INVALID_CODE));
         } else if (!currencyDao.findByCode(to).isPresent()){
-            validationResult.add(Error.of(SC_NOT_FOUND,"Вторая указанная валюта отсутствует в базе данных"));
+            validationResult.add(Error.of(SC_NOT_FOUND,ErrorMessage.NOT_FOUND.formatted("вторая валюта")));
         }
 
         if (amount == null || amount.isEmpty()){
-            validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр amount отсутствует"));
+            validationResult.add(Error.of(SC_BAD_REQUEST,ErrorMessage.MISSING_PARAMETER.formatted("amount")));
         } else {
             try {
                 BigDecimal.valueOf(Double.parseDouble(amount));
             } catch (NumberFormatException e) {
-                validationResult.add(Error.of(SC_BAD_REQUEST, "Параметр amount указан не корректно"));
+                validationResult.add(Error.of(SC_BAD_REQUEST, ErrorMessage.INVALID_PARAMETER.formatted("amount")));
             }
         }
         if (!exchangeRateDao.findByCodesCurrencies(from,to).isPresent() && !exchangeRateDao.findByCodesCurrencies(to,from).isPresent()
             && !exchangeRateDao.getCrossCource(from,to).isPresent()){
-            validationResult.add(Error.of(SC_NOT_FOUND, "Невозможно выполнить обмен(отсутствует возможность конвертации)"));
+            validationResult.add(Error.of(SC_NOT_FOUND, ErrorMessage.ERROR_EXCHANGE));
         }
 
         return validationResult;

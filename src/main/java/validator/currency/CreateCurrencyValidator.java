@@ -4,6 +4,7 @@ import dto.currency.CreateCurrencyDto;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import validator.Error;
+import validator.ErrorMessage;
 import validator.ValidationResult;
 import validator.Validator;
 
@@ -17,21 +18,21 @@ public class CreateCurrencyValidator implements Validator<CreateCurrencyDto> {
       ValidationResult validationResult = new ValidationResult();
 
       if (object.getName() == null || object.getName().isEmpty()){
-          validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр name отсутствует"));
+          validationResult.add(Error.of(SC_BAD_REQUEST,ErrorMessage.MISSING_PARAMETER.formatted("name")));
       } else if (!object.getName().matches("[a-zA-Z ]*")){
-          validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр name содержит недопустимые символы"));
+          validationResult.add(Error.of(SC_BAD_REQUEST,ErrorMessage.INVALID_PARAMETER.formatted("name")));
       }
 
       if (object.getCode() == null || object.getCode().isEmpty()){
-          validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр code отсутствует"));
+          validationResult.add(Error.of(SC_BAD_REQUEST, ErrorMessage.MISSING_PARAMETER.formatted("code")));
       } else if (!object.getCode().matches("[a-zA-Z]{3}")){
-          validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр code должен соответствовать стандарту ISO 4217"));
+          validationResult.add(Error.of(SC_BAD_REQUEST,ErrorMessage.INVALID_CODE));
       }
 
       if (object.getSign() == null || object.getSign().isEmpty()){
-          validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр sign отсутствует"));
+          validationResult.add(Error.of(SC_BAD_REQUEST,ErrorMessage.MISSING_PARAMETER.formatted("sign")));
       } else if(!object.getSign().matches("[^\\d\s]{1,3}")){
-          validationResult.add(Error.of(SC_BAD_REQUEST,"Параметр sign содержит недопустимые символы или значение более 3 символов)"));
+          validationResult.add(Error.of(SC_BAD_REQUEST,ErrorMessage.INVALID_PARAMETER.formatted("sign")));
       }
       return validationResult;
     }

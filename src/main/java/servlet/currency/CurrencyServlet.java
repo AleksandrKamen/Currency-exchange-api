@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.CurrencyService;
 import validator.Error;
+import validator.ErrorMessage;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -26,18 +27,13 @@ public class CurrencyServlet extends HttpServlet {
 
         try {
             var currency = currencyService.readCurrencyByCode(code);
-            if (!currency.isPresent()){
-                resp.setStatus(SC_NOT_FOUND);
-                objectMapper.writeValue(resp.getWriter(), Error.of(SC_NOT_FOUND,"Валюта с данным кодом не найдена"));
-            }else {
-                objectMapper.writeValue(resp.getWriter(), currency.get());
-            }
+            objectMapper.writeValue(resp.getWriter(), currency.get());
         } catch (ValidationException validationException){
             resp.setStatus(SC_BAD_REQUEST);
             objectMapper.writeValue(resp.getWriter(), validationException.getErrors());
         }catch (SQLException sqlException){
             resp.setStatus(SC_INTERNAL_SERVER_ERROR);
-            objectMapper.writeValue(resp.getWriter(), Error.of(SC_INTERNAL_SERVER_ERROR, "Ошибка сервера"));
+            objectMapper.writeValue(resp.getWriter(), Error.of(SC_INTERNAL_SERVER_ERROR, ErrorMessage.SERVER_ERROR));
         }
     }
 }

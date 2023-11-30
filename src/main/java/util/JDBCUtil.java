@@ -1,6 +1,7 @@
 package util;
 
 import lombok.experimental.UtilityClass;
+import validator.ErrorMessage;
 
 import java.io.File;
 import java.net.URISyntaxException;
@@ -35,7 +36,7 @@ public class JDBCUtil {
 
                 connection = DriverManager.getConnection(path);
             } catch (SQLException e) {
-                System.out.println("Подключение к базе данных не выполнено");
+                System.out.println(ErrorMessage.ERROR_CONNECTION);
                 throw new RuntimeException(e);
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);

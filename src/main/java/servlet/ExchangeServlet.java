@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import service.ExchangeRateService;
+import validator.ErrorMessage;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -31,7 +32,7 @@ public class ExchangeServlet extends HttpServlet {
         objectMapper.writeValue(resp.getWriter(), validationException.getErrors());
     } catch (SQLException sqlException){
         resp.setStatus(SC_INTERNAL_SERVER_ERROR);
-        objectMapper.writeValue(resp.getWriter(), "Ошибка сервера");
+        objectMapper.writeValue(resp.getWriter(), ErrorMessage.SERVER_ERROR);
     }
 
     }

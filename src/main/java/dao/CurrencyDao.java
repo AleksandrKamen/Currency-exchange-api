@@ -51,7 +51,6 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
             return entity;
         }
     }
-
     @Override
     public List<CurrencyEntity> findAll() throws SQLException {
         ArrayList<CurrencyEntity> currencyEntities = new ArrayList<>();
@@ -64,7 +63,6 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
             return currencyEntities;
         }
     }
-
     @Override
     public Optional<CurrencyEntity> findById(Integer id) throws SQLException {
         CurrencyEntity currency = null;
@@ -110,7 +108,6 @@ public class CurrencyDao implements Dao<Integer, CurrencyEntity> {
            return preparedStatement.executeUpdate() > 0;
         }
     }
-
     private static CurrencyEntity currencyBuild(ResultSet resultSet) throws SQLException {
        return CurrencyEntity.builder()
                 .id(resultSet.getInt("id"))
