@@ -25,7 +25,7 @@
 
 ![DataBase](https://github.com/AleksandrKamen/Currency-exchange-api/assets/144233016/8d87acba-12fb-4581-b416-61244b0bdd21)
 
-**REST API**
+# REST AP
 
 **Операции с валютами**
 ![image](https://github.com/AleksandrKamen/Currency-exchange-api/assets/144233016/3dc67f79-1090-458b-9933-6774a9fa1a1e)
